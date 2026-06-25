@@ -81,11 +81,12 @@
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
-                        <div id="form-errors-container" class="hidden alert alert-danger">
+                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('user/delete') }}" method="POST" class="x-submit" data-then="reload">
-                            @csrf
+            <form action="{{ route('users.destroy', $record->id ?? $user->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
+                                @csrf
+                                @method('DELETE')
                             <input type="hidden" name="user_id" class="e_user_id" value="">
                             <input type="hidden" name="avatar" class="e_avatar" value= "">
                             <div class="row">

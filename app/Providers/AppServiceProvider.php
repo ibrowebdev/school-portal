@@ -25,9 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('*', fn($view) => 
-            $view->with('menus', Menu::whereNull('parent_id')->where('is_active', true)->with('children')->orderBy('order')->get()
-            )
-        );
+        //
     }
 }

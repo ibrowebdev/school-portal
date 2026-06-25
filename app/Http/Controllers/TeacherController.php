@@ -10,16 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class TeacherController extends Controller
 {
-    /** add teacher page */
-    public function teacherAdd()
-    {
-        $users = User::where('type', User::TEACHER)->get();
-
-        return view('teacher.add-teacher', compact('users'));
-    }
-
-    /** teacher list — uses Eloquent relationship instead of raw join */
-    public function teacherList()
+    /** index page */
+    public function index()
     {
         $listTeacher = Teacher::with('user')->get();
 
@@ -34,8 +26,16 @@ class TeacherController extends Controller
         return view('teacher.teachers-grid', compact('teacherGrid'));
     }
 
-    /** Save Record */
-    public function saveRecord(Request $request): JsonResponse
+    /** create page */
+    public function create()
+    {
+        $users = User::where('type', User::TEACHER)->get();
+
+        return view('teacher.add-teacher', compact('users'));
+    }
+
+    /** store record */
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'full_name'     => ['required', 'string'],
@@ -55,7 +55,7 @@ class TeacherController extends Controller
         try {
             Teacher::create($validated);
 
-            return response()->json(['message' => 'Teacher record saved successfully!']);
+            return response()->json(['message' => 'Teacher record saved successfully!', 'redirect' => route('teachers.index')]);
         } catch (\Exception $e) {
             Log::error('Failed to save Teacher record', ['error' => $e->getMessage()]);
 
@@ -63,19 +63,18 @@ class TeacherController extends Controller
         }
     }
 
-    /** Edit Record — uses Eloquent relationship instead of raw join */
-    public function editRecord($teacher_id)
+    /** edit record */
+    public function edit(Teacher $teacher)
     {
-        $teacher = Teacher::with('user')->where('teacher_id', $teacher_id)->firstOrFail();
-
+        // $teacher is automatically resolved by Route Model Binding
+        $teacher->load('user');
         return view('teacher.edit-teacher', compact('teacher'));
     }
 
-    /** Update Record */
-    public function updateRecordTeacher(Request $request): JsonResponse
+    /** update record */
+    public function update(Request $request, Teacher $teacher): JsonResponse
     {
         $validated = $request->validate([
-            'id'            => ['required', 'exists:teachers,id'],
             'full_name'     => ['required', 'string'],
             'gender'        => ['required', 'string'],
             'date_of_birth' => ['required', 'string'],
@@ -90,11 +89,9 @@ class TeacherController extends Controller
         ]);
 
         try {
-            $teacher = Teacher::findOrFail($validated['id']);
-            unset($validated['id']);
             $teacher->update($validated);
 
-            return response()->json(['message' => 'Teacher record updated successfully!']);
+            return response()->json(['message' => 'Teacher record updated successfully!', 'redirect' => route('teachers.index')]);
         } catch (\Exception $e) {
             Log::error('Failed to update Teacher record', ['error' => $e->getMessage()]);
 
@@ -102,15 +99,11 @@ class TeacherController extends Controller
         }
     }
 
-    /** Delete Record */
-    public function teacherDelete(Request $request): JsonResponse
+    /** delete record */
+    public function destroy(Teacher $teacher): JsonResponse
     {
-        $validated = $request->validate([
-            'id' => ['required', 'exists:teachers,id'],
-        ]);
-
         try {
-            Teacher::findOrFail($validated['id'])->delete();
+            $teacher->delete();
 
             return response()->json(['message' => 'Teacher record deleted successfully!']);
         } catch (\Exception $e) {
@@ -118,5 +111,11 @@ class TeacherController extends Controller
 
             return response()->json(['message' => 'Failed to delete teacher record.'], 500);
         }
+    }
+
+    public function show(Teacher $teacher)
+    {
+        // Not implemented in original, but needed for resource
+        return view('teacher.show-teacher', compact('teacher'));
     }
 }

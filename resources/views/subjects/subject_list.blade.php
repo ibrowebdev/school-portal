@@ -54,7 +54,7 @@
                                         <a href="#" class="btn btn-outline-primary me-2">
                                             <i class="fas fa-download"></i> Download
                                         </a>
-                                        <a href="{{ route('subject/add/page') }}" class="btn btn-primary">
+                                        <a href="{{ route('subjects.create') }}" class="btn btn-primary">
                                             <i class="fas fa-plus"></i>
                                         </a>
                                     </div>
@@ -125,11 +125,12 @@
                     </div>
                     <div class="modal-btn delete-action">
                         <div class="row">
-                            <div id="form-errors-container" class="hidden alert alert-danger">
+                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('subject/delete') }}" method="POST" class="x-submit" data-then="reload">
+            <form action="{{ route('subjects.destroy', $record->id ?? $subject->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
                                 @csrf
+                                @method('DELETE')
                                 <input type="hidden" name="subject_id" class="e_subject_id" value="">
                                 <div class="row">
                                     <div class="col-6">

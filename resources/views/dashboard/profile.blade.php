@@ -124,7 +124,7 @@
                                 <h5 class="card-title">Change Password</h5>
                                 <div class="row">
                                     <div class="col-md-10 col-lg-6">
-                                        <div id="form-errors-container" class="hidden alert alert-danger">
+                                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="{{ route('change/password') }}" method="POST" class="x-submit" data-then="reload">

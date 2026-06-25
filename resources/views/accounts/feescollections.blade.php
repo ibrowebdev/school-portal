@@ -29,7 +29,7 @@
                                         <a href="#" class="btn btn-outline-primary me-2">
                                             <i class="fas fa-download"></i> Download
                                         </a>
-                                        <a href="{{ route('add/fees/collection/page') }}" class="btn btn-primary">
+                                        <a href="{{ route('fees.create') }}" class="btn btn-primary">
                                             <i class="fas fa-plus"></i>
                                         </a>
                                     </div>

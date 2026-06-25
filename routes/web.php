@@ -54,83 +54,41 @@ Route::middleware('auth')->group(function () {
     Route::get('setting/page', [SettingController::class, 'index'])->name('setting/page');
 
     // 2. USER MANAGEMENT
-    Route::controller(UserManagementController::class)->group(function () {
-        Route::post('change/password', 'changePassword')->name('change/password');
-        Route::get('list/users', 'index')->name('list/users');
-        Route::get('view/user/edit/{id}', 'userView');
-        Route::post('user/update', 'userUpdate')->name('user/update');
-        Route::post('user/delete', 'userDelete')->name('user/delete');
-        Route::get('get-users-data', 'getUsersData')->name('get-users-data');
-    });
+    Route::post('change/password', [UserManagementController::class, 'changePassword'])->name('change/password');
+    Route::get('get-users-data', [UserManagementController::class, 'getUsersData'])->name('get-users-data');
+    Route::resource('users', UserManagementController::class)->parameters(['users' => 'id']);
 
     // 3. STUDENTS
-    Route::prefix('student')->controller(StudentController::class)->group(function () {
-        Route::get('list', 'student')->name('student/list');
-        Route::get('grid', 'studentGrid')->name('student/grid');
-        Route::get('add/page', 'studentAdd')->name('student/add/page');
-        Route::get('edit/{id}', 'studentEdit');
-        Route::get('profile/{id}', 'studentProfile');
-        Route::post('add/save', 'studentSave')->name('student/add/save');
-        Route::post('update', 'studentUpdate')->name('student/update');
-        Route::post('delete', 'studentDelete')->name('student/delete');
-    });
+    Route::get('student/grid', [StudentController::class, 'studentGrid'])->name('students.grid');
+    Route::resource('students', StudentController::class)->parameters(['students' => 'id']);
 
     // 4. TEACHERS
-    Route::prefix('teacher')->controller(TeacherController::class)->group(function () {
-        Route::get('add/page', 'teacherAdd')->name('teacher/add/page');
-        Route::get('list/page', 'teacherList')->name('teacher/list/page');
-        Route::get('grid/page', 'teacherGrid')->name('teacher/grid/page');
-        Route::get('edit/{teacher_id}', 'editRecord');
-        Route::post('save', 'saveRecord')->name('teacher/save');
-        Route::post('update', 'updateRecordTeacher')->name('teacher/update');
-        Route::post('delete', 'teacherDelete')->name('teacher/delete');
-    });
+    Route::get('teacher/grid/page', [TeacherController::class, 'teacherGrid'])->name('teachers.grid');
+    Route::resource('teachers', TeacherController::class)->parameters(['teachers' => 'id']);
 
     // 5. DEPARTMENTS
-    Route::prefix('department')->controller(DepartmentController::class)->group(function () {
-        Route::get('list/page', 'departmentList')->name('department/list/page');
-        Route::get('add/page', 'indexDepartment')->name('department/add/page');
-        Route::get('edit/{department_id}', 'editDepartment');
-        Route::get('get-data-list', 'getDataList')->name('get-data-list');
-        Route::post('save', 'saveRecord')->name('department/save');
-        Route::post('update', 'updateRecord')->name('department/update');
-        Route::post('delete', 'deleteRecord')->name('department/delete');
-    });
+    Route::get('department/get-data-list', [DepartmentController::class, 'getDataList'])->name('departments.data-list');
+    Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'id']);
 
     // 6. SUBJECTS
-    Route::prefix('subject')->controller(SubjectController::class)->group(function () {
-        Route::get('list/page', 'subjectList')->name('subject/list/page');
-        Route::get('add/page', 'subjectAdd')->name('subject/add/page');
-        Route::get('edit/{subject_id}', 'subjectEdit');
-        Route::post('save', 'saveRecord')->name('subject/save');
-        Route::post('update', 'updateRecord')->name('subject/update');
-        Route::post('delete', 'deleteRecord')->name('subject/delete');
-    });
+    Route::resource('subjects', SubjectController::class)->parameters(['subjects' => 'id']);
 
     // 7. INVOICES
     Route::prefix('invoice')->controller(InvoiceController::class)->group(function () {
-        Route::get('list/page', 'invoiceList')->name('invoice/list/page');
-        Route::get('paid/page', 'invoicePaid')->name('invoice/paid/page');
-        Route::get('overdue/page', 'invoiceOverdue')->name('invoice/overdue/page');
-        Route::get('draft/page', 'invoiceDraft')->name('invoice/draft/page');
-        Route::get('recurring/page', 'invoiceRecurring')->name('invoice/recurring/page');
-        Route::get('cancelled/page', 'invoiceCancelled')->name('invoice/cancelled/page');
-        Route::get('grid/page', 'invoiceGrid')->name('invoice/grid/page');
-        Route::get('add/page', 'invoiceAdd')->name('invoice/add/page');
-        Route::get('edit/{invoice_id}', 'invoiceEdit')->name('invoice/edit/page');
-        Route::get('view/{invoice_id}', 'invoiceView')->name('invoice/view/page');
-        Route::get('settings/page', 'invoiceSettings')->name('invoice/settings/page');
-        Route::get('settings/tax/page', 'invoiceSettingsTax')->name('invoice/settings/tax/page');
-        Route::get('settings/bank/page', 'invoiceSettingsBank')->name('invoice/settings/bank/page');
-        Route::post('add/save', 'saveRecord')->name('invoice/add/save');
-        Route::post('update/save', 'updateRecord')->name('invoice/update/save');
-        Route::post('delete', 'deleteRecord')->name('invoice/delete');
+        Route::get('paid/page', 'invoicePaid')->name('invoices.paid');
+        Route::get('overdue/page', 'invoiceOverdue')->name('invoices.overdue');
+        Route::get('draft/page', 'invoiceDraft')->name('invoices.draft');
+        Route::get('recurring/page', 'invoiceRecurring')->name('invoices.recurring');
+        Route::get('cancelled/page', 'invoiceCancelled')->name('invoices.cancelled');
+        Route::get('grid/page', 'invoiceGrid')->name('invoices.grid');
+        Route::get('settings/page', 'invoiceSettings')->name('invoices.settings');
+        Route::get('settings/tax/page', 'invoiceSettingsTax')->name('invoices.settings-tax');
+        Route::get('settings/bank/page', 'invoiceSettingsBank')->name('invoices.settings-bank');
     });
+    Route::resource('invoices', InvoiceController::class)->parameters(['invoices' => 'id']);
 
     // 8. ACCOUNTS / FEES
-    Route::controller(AccountsController::class)->group(function () {
-        Route::get('account/fees/collections/page', 'index')->name('account/fees/collections/page');
-        Route::get('add/fees/collection/page', 'addFeesCollection')->name('add/fees/collection/page');
-        Route::post('fees/collection/save', 'saveRecord')->name('fees/collection/save');
-    });
+    Route::get('account/fees/collections/page', [AccountsController::class, 'index'])->name('fees.index');
+    Route::get('add/fees/collection/page', [AccountsController::class, 'create'])->name('fees.create');
+    Route::post('fees/collection/save', [AccountsController::class, 'store'])->name('fees.store');
 });

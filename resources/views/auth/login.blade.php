@@ -8,7 +8,7 @@
         <h2>Sign in</h2>
 
         {{-- Error container for AJAX validation errors --}}
-        <div id="form-errors-container" class="hidden alert alert-danger">
+        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
             <ul id="form-errors-list" class="mb-0"></ul>
         </div>
 

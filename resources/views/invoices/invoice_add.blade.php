@@ -8,7 +8,7 @@
                     <div class="col">
                         <ul class="breadcrumb invoices-breadcrumb">
                             <li class="breadcrumb-item invoices-breadcrumb-item">
-                                <a href="{{ route('invoice/list/page') }}">
+                                <a href="{{ route('invoices.index') }}">
                                     <i class="fe fe-chevron-left"></i> Back to Invoice List
                                 </a>
                             </li>
@@ -28,10 +28,10 @@
                 <div class="col-md-12">
                     <div class="card invoices-add-card">
                         <div class="card-body">
-                            <div id="form-errors-container" class="hidden alert alert-danger">
+                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('invoice/add/save') }}" class="x-submit invoices-form" method="POST" enctype="multipart/form-data"> data-then="reload"
+            <form action="{{ route('invoices.store') }}" class="x-submit invoices-form" method="POST" enctype="multipart/form-data"> data-then="reload"
                                 @csrf
                                 <div class="invoices-main-form">
                                     <div class="row">

@@ -18,10 +18,10 @@
                 <div class="row align-items-center">
                     <div class="col"></div>
                     <div class="col-auto">
-                        <a href="{{ route('invoice/list/page') }}" class="invoices-links active">
+                        <a href="{{ route('invoices.index') }}" class="invoices-links active">
                             <i class="fa fa-list" aria-hidden="true"></i>
                         </a>
-                        <a href="{{ route('invoice/grid/page') }}" class="invoices-links">
+                        <a href="{{ route('invoices.grid') }}" class="invoices-links">
                             <i class="fa fa-th" aria-hidden="true"></i>
                         </a>
                     </div>
@@ -41,7 +41,7 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="#" class="x-submit" data-then="reload">
@@ -94,7 +94,7 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="#" class="x-submit" data-then="reload">
@@ -135,7 +135,7 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="#" class="x-submit" data-then="reload">
@@ -180,7 +180,7 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="#" class="x-submit" data-then="reload">
@@ -246,7 +246,7 @@
                             <div class="col-lg-8 col-md-8">
                                 <div class="invoices-tabs">
                                     <ul>
-                                        <li><a class="active" href="{{ route('invoice/list/page') }}">All Invoice</a></li>
+                                        <li><a class="active" href="{{ route('invoices.index') }}">All Invoice</a></li>
                                         <li><a href="{{ route('invoice/paid/page') }}">Paid</a></li>
                                         <li><a href="{{ route('invoice/overdue/page') }}">Overdue</a></li>
                                         <li><a href="{{ route('invoice/draft/page') }}">Draft</a></li>
@@ -260,7 +260,7 @@
                                     <a href="invoices-settings.html" class="invoices-settings-icon">
                                         <i class="feather feather-settings"></i>
                                     </a>
-                                    <a href="{{ route('invoice/add/page') }}" class="btn">
+                                    <a href="{{ route('invoices.create') }}" class="btn">
                                         <i class="feather feather-plus-circle"></i> New Invoice
                                     </a>
                                 </div>

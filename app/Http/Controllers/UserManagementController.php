@@ -19,21 +19,20 @@ class UserManagementController extends Controller
     }
 
     /** user view edit */
-    public function userView($id)
+    public function edit(User $user)
     {
         $role = Role::all();
-        $users = User::findOrFail($id);
+        $users = $user;
 
         return view('usermanagement.user_update', compact('role', 'users'));
     }
 
     /** user Update */
-    public function userUpdate(Request $request): JsonResponse
+    public function update(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
-            'id'           => ['required', 'exists:users,id'],
             'name'         => ['required', 'string', 'max:255'],
-            'email'        => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $request->id],
+            'email'        => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'phone_number' => ['required', 'string', 'max:255'],
             'status'       => ['required', 'string', 'max:255'],
             'role_name'    => ['required', 'string', 'max:255'],
@@ -43,8 +42,6 @@ class UserManagementController extends Controller
         ]);
 
         try {
-            $user = User::findOrFail($validated['id']);
-
             if ($request->hasFile('avatar')) {
                 // Delete old avatar if it's not the default
                 if ($user->avatar !== 'photo_defaults.jpg' && ! empty($user->avatar) && file_exists(public_path('images/' . $user->avatar))) {
@@ -59,12 +56,12 @@ class UserManagementController extends Controller
 
             // Sync type and role
             $validated['type'] = $validated['role_name'];
-            unset($validated['id'], $validated['role_name']);
+            unset($validated['role_name']);
 
             $user->update($validated);
             $user->syncRoles([$validated['type']]);
 
-            return response()->json(['message' => 'User updated successfully!']);
+            return response()->json(['message' => 'User updated successfully!', 'redirect' => route('users.index')]);
         } catch (\Exception $e) {
             Log::error('User Update Failed', ['error' => $e->getMessage()]);
 
@@ -73,14 +70,9 @@ class UserManagementController extends Controller
     }
 
     /** user delete */
-    public function userDelete(Request $request): JsonResponse
+    public function destroy(User $user): JsonResponse
     {
-        $validated = $request->validate([
-            'id' => ['required', 'exists:users,id'],
-        ]);
-
         try {
-            $user = User::findOrFail($validated['id']);
             if ($user->avatar !== 'photo_defaults.jpg' && ! empty($user->avatar) && file_exists(public_path('images/' . $user->avatar))) {
                 unlink(public_path('images/' . $user->avatar));
             }
@@ -93,6 +85,21 @@ class UserManagementController extends Controller
 
             return response()->json(['message' => 'Failed to delete user.'], 500);
         }
+    }
+
+    public function show(User $user)
+    {
+        //
+    }
+
+    public function create()
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        //
     }
 
     /** change password */
@@ -157,7 +164,7 @@ class UserManagementController extends Controller
             $modify = '
                 <td class="text-end">
                     <div class="actions">
-                        <a href="' . url('view/user/edit/' . $record->id) . '" class="btn btn-sm bg-danger-light">
+                        <a href="' . route('users.edit', $record->id) . '" class="btn btn-sm bg-danger-light">
                             <i class="far fa-edit me-2"></i>
                         </a>
                         <a class="btn btn-sm bg-danger-light delete_user" data-bs-toggle="modal" data-id="' . $record->id . '" data-bs-target="#delete_user">

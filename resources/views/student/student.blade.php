@@ -9,7 +9,7 @@
                         <div class="page-sub-header">
                             <h3 class="page-title">Students</h3>
                             <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('student/list') }}">Student</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('students.index') }}">Student</a></li>
                                 <li class="breadcrumb-item active">All Students</li>
                             </ul>
                         </div>
@@ -50,14 +50,14 @@
                                         <h3 class="page-title">Students</h3>
                                     </div>
                                     <div class="col-auto text-end float-end ms-auto download-grp">
-                                        <a href="{{ route('student/list') }}" class="btn btn-outline-gray me-2 active">
+                                        <a href="{{ route('students.index') }}" class="btn btn-outline-gray me-2 active">
                                             <i class="fa fa-list" aria-hidden="true"></i>
                                         </a>
-                                        <a href="{{ route('student/grid') }}" class="btn btn-outline-gray me-2">
+                                        <a href="{{ route('students.grid') }}" class="btn btn-outline-gray me-2">
                                             <i class="fa fa-th" aria-hidden="true"></i>
                                         </a>
                                         <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-download"></i> Download</a>
-                                        <a href="{{ route('student/add/page') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                                        <a href="{{ route('students.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -138,11 +138,12 @@
                         <p>Are you sure want to delete?</p>
                     </div>
                     <div class="modal-btn delete-action">
-                        <div id="form-errors-container" class="hidden alert alert-danger">
+                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('student/delete') }}" method="POST" class="x-submit" data-then="reload">
-                            @csrf
+            <form action="{{ route('students.destroy', $record->id ?? $student->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
+                                @csrf
+                                @method('DELETE')
                             <div class="row">
                                 <input type="hidden" name="id" class="e_id" value="">
                                 <input type="hidden" name="avatar" class="e_avatar" value="">

@@ -17,7 +17,7 @@
                 <div class="col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <div id="form-errors-container" class="hidden alert alert-danger">
+                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="{{ route('user/update') }}" method="POST" enctype="multipart/form-data" class="x-submit" data-then="reload">

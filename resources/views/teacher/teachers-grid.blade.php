@@ -9,7 +9,7 @@
                         <div class="page-sub-header">
                             <h3 class="page-title">Teachers</h3>
                             <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('student/list') }}">Teacher</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('students.index') }}">Teacher</a></li>
                                 <li class="breadcrumb-item active">All Teachers</li>
                             </ul>
                         </div>
@@ -27,7 +27,7 @@
                                         <h3 class="page-title">Teachers</h3>
                                     </div>
                                     <div class="col-auto text-end float-end ms-auto download-grp">
-                                        <a href="{{ route('teacher/list/page') }}" class="btn btn-outline-gray me-2"><i class="fa fa-list"></i></a>
+                                        <a href="{{ route('teachers.index') }}" class="btn btn-outline-gray me-2"><i class="fa fa-list"></i></a>
                                         <a href="{{ route('teacher/grid/page') }}" class="btn btn-outline-gray me-2 active"><i class="fa fa-th"></i></a>
                                     </div>
                                 </div>

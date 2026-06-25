@@ -51,11 +51,13 @@
                                 <div class="col-auto text-end float-end ms-auto download-grp">
                                     <a href="teachers.html" class="btn btn-outline-gray me-2 active">
                                         <i class="fa fa-list" aria-hidden="true"></i>
-                                    <a href="{{ route('teacher/grid/page') }}" class="btn btn-outline-gray me-2">
+                                    </a>
+                                    <a href="{{ route('teachers.grid') }}" class="btn btn-outline-gray me-2">
                                         <i class="fa fa-th" aria-hidden="true"></i>
+                                    </a>
                                     <a href="#" class="btn btn-outline-primary me-2"><i
                                             class="fas fa-download"></i> Download</a>
-                                    <a href="{{ route('teacher/add/page') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+                                    <a href="{{ route('teachers.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -140,11 +142,12 @@
                     <p>Are you sure want to delete?</p>
                 </div>
                 <div class="modal-btn delete-action">
-                    <div id="form-errors-container" class="hidden alert alert-danger">
+                    <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('teacher/delete') }}" method="POST" class="x-submit" data-then="reload">
-                        @csrf
+            <form action="{{ route('teachers.destroy', $record->id ?? $teacher->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
+                                @csrf
+                                @method('DELETE')
                         <div class="row">
                             <input type="hidden" name="id" class="e_teacher_id" value="">
                             <div class="col-6">

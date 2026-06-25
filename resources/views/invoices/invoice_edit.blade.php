@@ -8,7 +8,7 @@
                     <div class="col">
                         <ul class="breadcrumb invoices-breadcrumb">
                             <li class="breadcrumb-item invoices-breadcrumb-item">
-                                <a href="{{ route('invoice/list/page') }}">
+                                <a href="{{ route('invoices.index') }}">
                                     <i class="fe fe-chevron-left"></i> Back to Invoice List
                                 </a>
                             </li>
@@ -28,7 +28,7 @@
                 <div class="col-md-12">
                     <div class="card invoices-add-card">
                         <div class="card-body">
-                            <div id="form-errors-container" class="hidden alert alert-danger">
+                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form action="{{ route('invoice/update/save') }}" class="x-submit invoices-form" method="POST" enctype="multipart/form-data"> data-then="reload"
@@ -593,11 +593,12 @@
                         <p>Are you sure want to delete?</p>
                     </div>
                     <div class="modal-btn delete-action">
-                        <div id="form-errors-container" class="hidden alert alert-danger">
+                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('invoice/delete') }}" method="POST" class="x-submit" data-then="reload">
-                            @csrf
+            <form action="{{ route('invoices.destroy', $record->id ?? $invoice->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
+                                @csrf
+                                @method('DELETE')
                             <div class="row">
                                 <input type="hidden" name="invoice_id" value="{{ $invoiceView->invoice_id }}">
                                 <input type="hidden" name="upload_sign" value="{{ $invoiceView->upload_sign }}">

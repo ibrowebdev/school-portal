@@ -53,7 +53,7 @@
                                     <a href="#" class="btn btn-outline-primary me-2">
                                         <i class="fas fa-download"></i> Download
                                     </a>
-                                    <a href="{{ route('department/add/page') }}" class="btn btn-primary">
+                                    <a href="{{ route('departments.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i>
                                     </a>
                                 </div>
@@ -90,11 +90,12 @@
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
-                        <div id="form-errors-container" class="hidden alert alert-danger">
+                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('department/delete') }}" method="POST" class="x-submit" data-then="reload">
-                            @csrf
+            <form action="{{ route('departments.destroy', $record->id ?? $department->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
+                                @csrf
+                                @method('DELETE')
                             <input type="hidden" name="department_id" class="e_department_id" value="">
                             <div class="row">
                                 <div class="col-6">
@@ -124,7 +125,7 @@
                 ordering: true,
                 searching: true,
                 ajax: {
-                    url:"{{ route('get-data-list') }}",
+                    url:"{{ route('departments.data-list') }}",
                 },
                 columns: [
                     {

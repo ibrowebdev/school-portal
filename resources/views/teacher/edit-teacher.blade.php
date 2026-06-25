@@ -8,7 +8,7 @@
                 <div class="col">
                     <h3 class="page-title">Edit Teachers</h3>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('teacher/list/page') }}">Teachers</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('teachers.index') }}">Teachers</a></li>
                         <li class="breadcrumb-item active">Edit Teachers</li>
                     </ul>
                 </div>
@@ -18,12 +18,12 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
-                        <div id="form-errors-container" class="hidden alert alert-danger">
+                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('teacher/update') }}" method="POST" class="x-submit" data-then="reload">
-                            @csrf
-                            <input type="hidden" class="form-control" name="id" value="{{ $teacher->id }}">
+            <form action="{{ route('teachers.update', $teacher->id) }}" method="POST" class="x-submit" data-then="reload">
+                                @csrf
+                                @method('PUT')
                             <div class="row">
                                 <div class="col-12">
                                     <h5 class="form-title"><span>Basic Details</span></h5>

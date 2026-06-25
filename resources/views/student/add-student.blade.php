@@ -9,7 +9,7 @@
                         <div class="page-sub-header">
                             <h3 class="page-title">Add Students</h3>
                             <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('student/add/page') }}">Student</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('students.create') }}">Student</a></li>
                                 <li class="breadcrumb-item active">Add Students</li>
                             </ul>
                         </div>
@@ -20,10 +20,10 @@
                 <div class="col-sm-12">
                     <div class="card comman-shadow">
                         <div class="card-body">
-                            <div id="form-errors-container" class="hidden alert alert-danger">
+                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
-            <form action="{{ route('student/add/save') }}" method="POST" enctype="multipart/form-data" class="x-submit" data-then="reload">
+            <form action="{{ route('students.store') }}" method="POST" enctype="multipart/form-data" class="x-submit" data-then="reload">
                                 @csrf
                                 <div class="row">
                                     <div class="col-12">

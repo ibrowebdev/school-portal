@@ -36,7 +36,7 @@
             </div>
 
             <div class="top-nav-search">
-                <div id="form-errors-container" class="hidden alert alert-danger">
+                <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
                 <ul id="form-errors-list" class="mb-0"></ul>
             </div>
             <form class="x-submit" data-then="reload">
@@ -179,9 +179,7 @@
 		@include('sidebar.sidebar')
 		{{-- content page --}}
         @yield('content')
-        <footer>
-            <p>Copyright ©  <?php echo date('Y'); ?> Soeng Souy.</p>
-        </footer>
+        <x-footer />
     
     </div>
 

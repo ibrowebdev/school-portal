@@ -10,26 +10,18 @@ use Illuminate\Support\Facades\Log;
 class DepartmentController extends Controller
 {
     /** index page department */
-    public function indexDepartment()
-    {
-        return view('department.add-department');
-    }
-
-    /** edit record */
-    public function editDepartment($department_id)
-    {
-        $department = Department::where('department_id', $department_id)->firstOrFail();
-
-        return view('department.edit-departmen', compact('department'));
-    }
-
-    /** department list */
-    public function departmentList()
+    public function index()
     {
         return view('department.list-department');
     }
 
-    /** get data list — converted from DB::table to Eloquent */
+    /** create page */
+    public function create()
+    {
+        return view('department.add-department');
+    }
+
+    /** get data list */
     public function getDataList(Request $request): JsonResponse
     {
         $draw            = $request->get('draw');
@@ -69,7 +61,7 @@ class DepartmentController extends Controller
             $modify = '
                 <td class="text-end">
                     <div class="actions">
-                        <a href="' . url('department/edit/' . $record->department_id) . '" class="btn btn-sm bg-danger-light">
+                        <a href="' . route('departments.edit', $record->id) . '" class="btn btn-sm bg-danger-light">
                             <i class="far fa-edit me-2"></i>
                         </a>
                         <a class="btn btn-sm bg-danger-light delete department_id" data-bs-toggle="modal" data-department_id="' . $record->id . '" data-bs-target="#delete">
@@ -98,7 +90,7 @@ class DepartmentController extends Controller
     }
 
     /** Save Record */
-    public function saveRecord(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'department_name'       => ['required', 'string'],
@@ -110,7 +102,7 @@ class DepartmentController extends Controller
         try {
             Department::create($validated);
 
-            return response()->json(['message' => 'Department has been added successfully!']);
+            return response()->json(['message' => 'Department has been added successfully!', 'redirect' => route('departments.index')]);
         } catch (\Exception $e) {
             Log::error('Failed to add Department record', ['error' => $e->getMessage()]);
 
@@ -118,11 +110,16 @@ class DepartmentController extends Controller
         }
     }
 
+    /** edit record */
+    public function edit(Department $department)
+    {
+        return view('department.edit-departmen', compact('department'));
+    }
+
     /** Update Record */
-    public function updateRecord(Request $request): JsonResponse
+    public function update(Request $request, Department $department): JsonResponse
     {
         $validated = $request->validate([
-            'department_id'         => ['required', 'string'],
             'department_name'       => ['required', 'string'],
             'head_of_department'    => ['required', 'string'],
             'department_start_date' => ['required', 'string'],
@@ -130,10 +127,9 @@ class DepartmentController extends Controller
         ]);
 
         try {
-            $department = Department::where('department_id', $validated['department_id'])->firstOrFail();
             $department->update($validated);
 
-            return response()->json(['message' => 'Department record updated successfully!']);
+            return response()->json(['message' => 'Department record updated successfully!', 'redirect' => route('departments.index')]);
         } catch (\Exception $e) {
             Log::error('Failed to update Department record', ['error' => $e->getMessage()]);
 
@@ -142,14 +138,10 @@ class DepartmentController extends Controller
     }
 
     /** Delete Record */
-    public function deleteRecord(Request $request): JsonResponse
+    public function destroy(Department $department): JsonResponse
     {
-        $validated = $request->validate([
-            'department_id' => ['required'],
-        ]);
-
         try {
-            Department::findOrFail($validated['department_id'])->delete();
+            $department->delete();
 
             return response()->json(['message' => 'Department record deleted successfully!']);
         } catch (\Exception $e) {
@@ -157,5 +149,10 @@ class DepartmentController extends Controller
 
             return response()->json(['message' => 'Failed to delete department.'], 500);
         }
+    }
+
+    public function show(Department $department)
+    {
+        //
     }
 }

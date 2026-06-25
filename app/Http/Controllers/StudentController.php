@@ -6,12 +6,11 @@ use App\Models\Student;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
     /** index page student list */
-    public function student()
+    public function index()
     {
         $studentList = Student::all();
 
@@ -27,13 +26,13 @@ class StudentController extends Controller
     }
 
     /** student add page */
-    public function studentAdd()
+    public function create()
     {
         return view('student.add-student');
     }
 
     /** Save Record */
-    public function studentSave(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'first_name'    => ['required', 'string', 'max:255'],
@@ -59,7 +58,7 @@ class StudentController extends Controller
                 'upload' => 'student-photos/' . $filename,
             ]));
 
-            return response()->json(['message' => 'Student has been added successfully!']);
+            return response()->json(['message' => 'Student has been added successfully!', 'redirect' => route('students.index')]);
         } catch (\Exception $e) {
             Log::error('Student Save Failed', ['error' => $e->getMessage()]);
 
@@ -68,18 +67,16 @@ class StudentController extends Controller
     }
 
     /** View */
-    public function studentEdit($id)
+    public function edit(Student $student)
     {
-        $studentEdit = Student::findOrFail($id);
-
+        $studentEdit = $student;
         return view('student.edit-student', compact('studentEdit'));
     }
 
     /** Update Record */
-    public function studentUpdate(Request $request): JsonResponse
+    public function update(Request $request, Student $student): JsonResponse
     {
         $validated = $request->validate([
-            'id'            => ['required', 'exists:students,id'],
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['required', 'string', 'max:255'],
             'gender'        => ['required', 'not_in:0'],
@@ -87,17 +84,15 @@ class StudentController extends Controller
             'roll'          => ['required', 'string', 'max:50'],
             'blood_group'   => ['required', 'string', 'max:10'],
             'religion'      => ['required', 'string', 'max:50'],
-            'email'         => ['required', 'email', 'unique:students,email,' . $request->id],
+            'email'         => ['required', 'email', 'unique:students,email,' . $student->id],
             'class'         => ['required', 'string', 'max:50'],
             'section'       => ['required', 'string', 'max:50'],
-            'admission_id'  => ['required', 'string', 'unique:students,admission_id,' . $request->id],
+            'admission_id'  => ['required', 'string', 'unique:students,admission_id,' . $student->id],
             'phone_number'  => ['required', 'numeric', 'digits_between:8,15'],
             'upload'        => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         try {
-            $student = Student::findOrFail($validated['id']);
-
             if ($request->hasFile('upload')) {
                 // Delete old image
                 if (! empty($student->upload) && file_exists(public_path($student->upload))) {
@@ -110,27 +105,20 @@ class StudentController extends Controller
                 unset($validated['upload']);
             }
 
-            unset($validated['id']);
             $student->update($validated);
 
-            return response()->json(['message' => 'Student updated successfully!']);
+            return response()->json(['message' => 'Student updated successfully!', 'redirect' => route('students.index')]);
         } catch (\Exception $e) {
-            Log::error('Student Update Failed', ['error' => $e->getMessage(), 'id' => $validated['id'] ?? null]);
+            Log::error('Student Update Failed', ['error' => $e->getMessage(), 'id' => $student->id]);
 
             return response()->json(['message' => 'Failed to update student.'], 500);
         }
     }
 
     /** Delete Record */
-    public function studentDelete(Request $request): JsonResponse
+    public function destroy(Student $student): JsonResponse
     {
-        $validated = $request->validate([
-            'id' => ['required', 'exists:students,id'],
-        ]);
-
         try {
-            $student = Student::findOrFail($validated['id']);
-
             if (! empty($student->upload) && file_exists(public_path($student->upload))) {
                 unlink(public_path($student->upload));
             }
@@ -139,17 +127,16 @@ class StudentController extends Controller
 
             return response()->json(['message' => 'Student deleted successfully!']);
         } catch (\Exception $e) {
-            Log::error('Student Deletion Failed', ['error' => $e->getMessage(), 'id' => $validated['id']]);
+            Log::error('Student Deletion Failed', ['error' => $e->getMessage(), 'id' => $student->id]);
 
             return response()->json(['message' => 'Failed to delete student.'], 500);
         }
     }
 
     /** student profile page */
-    public function studentProfile($id)
+    public function show(Student $student)
     {
-        $studentProfile = Student::findOrFail($id);
-
+        $studentProfile = $student;
         return view('student.student-profile', compact('studentProfile'));
     }
 }

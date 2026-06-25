@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class SubjectController extends Controller
 {
     /** index page */
-    public function subjectList()
+    public function index()
     {
         $subjectList = Subject::all();
 
@@ -18,13 +18,13 @@ class SubjectController extends Controller
     }
 
     /** subject add */
-    public function subjectAdd()
+    public function create()
     {
         return view('subjects.subject_add');
     }
 
     /** Save Record */
-    public function saveRecord(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'subject_name' => ['required', 'string'],
@@ -34,7 +34,7 @@ class SubjectController extends Controller
         try {
             Subject::create($validated);
 
-            return response()->json(['message' => 'Subject record saved successfully!']);
+            return response()->json(['message' => 'Subject record saved successfully!', 'redirect' => route('subjects.index')]);
         } catch (\Exception $e) {
             Log::error('Failed to save Subject record', ['error' => $e->getMessage()]);
 
@@ -43,27 +43,24 @@ class SubjectController extends Controller
     }
 
     /** subject edit view */
-    public function subjectEdit($subject_id)
+    public function edit(Subject $subject)
     {
-        $subjectEdit = Subject::where('subject_id', $subject_id)->firstOrFail();
-
+        $subjectEdit = $subject;
         return view('subjects.subject_edit', compact('subjectEdit'));
     }
 
     /** Update Record */
-    public function updateRecord(Request $request): JsonResponse
+    public function update(Request $request, Subject $subject): JsonResponse
     {
         $validated = $request->validate([
-            'subject_id'   => ['required', 'string'],
             'subject_name' => ['required', 'string'],
             'class'        => ['required', 'string'],
         ]);
 
         try {
-            $subject = Subject::where('subject_id', $validated['subject_id'])->firstOrFail();
             $subject->update($validated);
 
-            return response()->json(['message' => 'Subject record updated successfully!']);
+            return response()->json(['message' => 'Subject record updated successfully!', 'redirect' => route('subjects.index')]);
         } catch (\Exception $e) {
             Log::error('Failed to update Subject record', ['error' => $e->getMessage()]);
 
@@ -72,14 +69,10 @@ class SubjectController extends Controller
     }
 
     /** Delete Record */
-    public function deleteRecord(Request $request): JsonResponse
+    public function destroy(Subject $subject): JsonResponse
     {
-        $validated = $request->validate([
-            'subject_id' => ['required', 'string'],
-        ]);
-
         try {
-            Subject::where('subject_id', $validated['subject_id'])->firstOrFail()->delete();
+            $subject->delete();
 
             return response()->json(['message' => 'Subject record deleted successfully!']);
         } catch (\Exception $e) {
@@ -87,5 +80,10 @@ class SubjectController extends Controller
 
             return response()->json(['message' => 'Failed to delete subject record.'], 500);
         }
+    }
+
+    public function show(Subject $subject)
+    {
+        //
     }
 }

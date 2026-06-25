@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 class InvoiceController extends Controller
 {
     /** index page */
-    public function invoiceList()
+    public function index()
     {
         $invoiceList = InvoiceCustomerName::with('totalAmount')->get();
 
@@ -64,7 +64,7 @@ class InvoiceController extends Controller
     }
 
     /** invoice add page */
-    public function invoiceAdd()
+    public function create()
     {
         $users = User::whereIn('type', [User::STUDENT, User::PARENT])->get();
 
@@ -72,7 +72,7 @@ class InvoiceController extends Controller
     }
 
     /** save record invoice */
-    public function saveRecord(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'customer_name'           => ['required', 'string'],
@@ -163,7 +163,7 @@ class InvoiceController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Invoice created successfully!', 'redirect' => route('invoice/list/page')]);
+            return response()->json(['message' => 'Invoice created successfully!', 'redirect' => route('invoices.index')]);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Invoice creation failed', ['error' => $e->getMessage()]);
@@ -173,11 +173,10 @@ class InvoiceController extends Controller
     }
 
     /** invoice edit */
-    public function invoiceEdit($invoice_id)
+    public function edit(InvoiceCustomerName $invoice)
     {
-        $invoiceView = InvoiceCustomerName::with(['totalAmount', 'paymentDetails'])
-            ->where('invoice_id', $invoice_id)
-            ->firstOrFail();
+        $invoiceView = $invoice->load(['totalAmount', 'paymentDetails']);
+        $invoice_id = $invoice->invoice_id;
 
         $users = User::all();
         $invoiceDetails    = InvoiceDetails::where('invoice_id', $invoice_id)->get();
@@ -188,11 +187,11 @@ class InvoiceController extends Controller
     }
 
     /** Update Record */
-    public function updateRecord(Request $request): JsonResponse
+    public function update(Request $request, InvoiceCustomerName $invoice): JsonResponse
     {
         DB::beginTransaction();
         try {
-            $customerName = InvoiceCustomerName::where('invoice_id', $request->invoice_id)->firstOrFail();
+            $customerName = $invoice;
             $customerName->update([
                 'customer_name'     => $request->customer_name,
                 'po_number'         => $request->po_number,
@@ -206,10 +205,9 @@ class InvoiceController extends Controller
                 'invoice_to'        => $request->invoice_to,
             ]);
 
-            // Simplified: in a real app, you'd likely delete and recreate details, or update existing ones based on ID.
-            // For now, mirroring existing logic which assumes 1:1 mapping of input array to existing DB rows via firstOrFail.
-            // (Note: This is brittle if row count changes, but matches previous behavior).
-            $invoiceDetailsList = InvoiceDetails::where('invoice_id', $request->invoice_id)->get();
+            $invoice_id = $invoice->invoice_id;
+
+            $invoiceDetailsList = InvoiceDetails::where('invoice_id', $invoice_id)->get();
             foreach ($request->items as $key => $values) {
                 if (isset($invoiceDetailsList[$key])) {
                     $invoiceDetailsList[$key]->update([
@@ -224,7 +222,7 @@ class InvoiceController extends Controller
             }
 
             if (!empty($request->service_charge)) {
-                $charges = InvoiceAdditionalCharges::where('invoice_id', $request->invoice_id)->get();
+                $charges = InvoiceAdditionalCharges::where('invoice_id', $invoice_id)->get();
                 foreach ($request->service_charge as $key => $values) {
                      if(isset($charges[$key])) {
                         $charges[$key]->update(['service_charge' => $request->service_charge[$key]]);
@@ -233,7 +231,7 @@ class InvoiceController extends Controller
             }
 
             if (!empty($request->offer_new)) {
-                 $discounts = InvoiceDiscount::where('invoice_id', $request->invoice_id)->get();
+                 $discounts = InvoiceDiscount::where('invoice_id', $invoice_id)->get();
                 foreach ($request->offer_new as $key => $values) {
                      if(isset($discounts[$key])) {
                          $discounts[$key]->update(['offer_new' => $request->offer_new[$key]]);
@@ -241,7 +239,7 @@ class InvoiceController extends Controller
                 }
             }
 
-            $paymentDetails = InvoicePaymentDetails::where('invoice_id', $request->invoice_id)->firstOrFail();
+            $paymentDetails = InvoicePaymentDetails::where('invoice_id', $invoice_id)->firstOrFail();
             $paymentDetails->update([
                 'account_holder_name'      => $request->account_holder_name,
                 'bank_name'                => $request->bank_name,
@@ -262,7 +260,7 @@ class InvoiceController extends Controller
                 $upload_sign = 'upload_sign/' . $filename;
             }
 
-            $totalAmount = InvoiceTotalAmount::where('invoice_id', $request->invoice_id)->firstOrFail();
+            $totalAmount = InvoiceTotalAmount::where('invoice_id', $invoice_id)->firstOrFail();
             $totalAmount->update([
                 'taxable_amount'          => $request->taxable_amount,
                 'round_off'               => $request->round_off,
@@ -273,7 +271,7 @@ class InvoiceController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'Invoice updated successfully!']);
+            return response()->json(['message' => 'Invoice updated successfully!', 'redirect' => route('invoices.index')]);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Invoice update failed', ['error' => $e->getMessage()]);
@@ -283,23 +281,25 @@ class InvoiceController extends Controller
     }
 
     /** Delete Record */
-    public function deleteRecord(Request $request): JsonResponse
+    public function destroy(InvoiceCustomerName $invoice): JsonResponse
     {
         DB::beginTransaction();
         try {
-            InvoiceCustomerName::where('invoice_id', $request->invoice_id)->delete();
-            InvoiceDetails::where('invoice_id', $request->invoice_id)->delete();
-            InvoiceTotalAmount::where('invoice_id', $request->invoice_id)->delete();
-            InvoiceAdditionalCharges::where('invoice_id', $request->invoice_id)->delete();
-            InvoiceDiscount::where('invoice_id', $request->invoice_id)->delete();
-            InvoicePaymentDetails::where('invoice_id', $request->invoice_id)->delete();
+            $invoice_id = $invoice->invoice_id;
+            
+            $invoice->delete();
+            InvoiceDetails::where('invoice_id', $invoice_id)->delete();
+            InvoiceTotalAmount::where('invoice_id', $invoice_id)->delete();
+            InvoiceAdditionalCharges::where('invoice_id', $invoice_id)->delete();
+            InvoiceDiscount::where('invoice_id', $invoice_id)->delete();
+            InvoicePaymentDetails::where('invoice_id', $invoice_id)->delete();
 
             if (!empty($request->upload_sign) && File::exists(public_path($request->upload_sign))) {
                 File::delete(public_path($request->upload_sign));
             }
             DB::commit();
 
-            return response()->json(['message' => 'Record deleted successfully!', 'redirect' => route('invoice/list/page')]);
+            return response()->json(['message' => 'Record deleted successfully!', 'redirect' => route('invoices.index')]);
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -308,12 +308,10 @@ class InvoiceController extends Controller
     }
 
     /** invoice view */
-    public function invoiceView($invoice_id)
+    public function show(InvoiceCustomerName $invoice)
     {
-        $invoiceView = InvoiceCustomerName::with(['totalAmount', 'paymentDetails'])
-            ->where('invoice_id', $invoice_id)
-            ->firstOrFail();
-        $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice_id)->get();
+        $invoiceView = $invoice->load(['totalAmount', 'paymentDetails']);
+        $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice->invoice_id)->get();
 
         return view('invoices.invoice_view', compact('invoiceView', 'invoiceDetails'));
     }
