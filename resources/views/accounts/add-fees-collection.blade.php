@@ -19,7 +19,10 @@
                 <div class="col-sm-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('fees/collection/save') }}" method="POST">
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('fees/collection/save') }}" method="POST" class="x-submit" data-then="reload">
                                 @csrf
                                 <div class="row">
                                     <div class="col-12">

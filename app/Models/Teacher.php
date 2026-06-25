@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Teacher extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'teacher_id',
         'user_id',
@@ -26,23 +28,30 @@ class Teacher extends Model
         'country',
     ];
 
-    protected static function boot()
+    protected function casts(): array
     {
-        parent::boot();
-        self::creating(function ($model) {
-            $getUser = self::orderBy('teacher_id', 'desc')->first();
+        return [
+            'date_of_birth' => 'date',
+            'joining_date' => 'date',
+        ];
+    }
 
-            if ($getUser) {
-                $latestID = intval(substr($getUser->user_id, 3));
-                $nextID = $latestID + 1;
-            } else {
-                $nextID = 1;
-            }
-            $model->user_id = '000' . sprintf("%03s", $nextID);
-            while (self::where('teacher_id', $model->user_id)->exists()) {
-                $nextID++;
-                $model->user_id = '000' . sprintf("%03s", $nextID);
+    /**
+     * Auto-generate a prefixed teacher_id on creation.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Teacher $model) {
+            if (empty($model->teacher_id)) {
+                $latest = static::orderByDesc('teacher_id')->value('teacher_id');
+                $nextID = $latest ? intval(substr($latest, 3)) + 1 : 1;
+                $model->teacher_id = '000' . sprintf('%03d', $nextID);
             }
         });
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

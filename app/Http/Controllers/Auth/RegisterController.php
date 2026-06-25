@@ -3,50 +3,66 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Hash;
-use DB;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
+use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
-    public function register()
+    public function __construct()
     {
-        $role = DB::table('role_type_users')->get();
-        return view('auth.register',compact('role'));
+        $this->middleware('guest');
     }
 
-    public function storeUser(Request $request)
+    /**
+     * Show the registration form.
+     */
+    public function register()
     {
+        $roles = Role::pluck('name');
+
+        return view('auth.register', compact('roles'));
+    }
+
+    /**
+     * Handle a registration request.
+     */
+    public function storeUser(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'role_name' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password_confirmation' => ['required'],
+        ]);
+
         try {
-            $request->validate([
-                'name'      => 'required|string|max:255',
-                'email'     => 'required|string|email|max:255|unique:users',
-                'role_name' => 'required|string|max:255',
-                'password'  => 'required|string|min:8|confirmed',
-                'password_confirmation' => 'required',
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'type' => $validated['role_name'],
+                'avatar' => 'photo_defaults.jpg',
+                'join_date' => now()->toDayDateTimeString(),
+                'password' => $validated['password'],
             ]);
-    
-            $dt       = Carbon::now();
-            $todayDate = $dt->toDayDateTimeString();
-    
-            User::create([
-                'name'      => $request->name,
-                'avatar'    => $request->image,
-                'email'     => $request->email,
-                'join_date' => $todayDate,
-                'role_name' => $request->role_name,
-                'password'  => Hash::make($request->password),
+
+            $user->assignRole($validated['role_name']);
+
+            return response()->json([
+                'message' => 'Account created successfully!',
+                'redirect' => route('login'),
             ]);
-    
-            return redirect()->route('login')->with('success', 'Create new account successfully :)');
-        } catch (QueryException $e) {
-            Log::error('Creating user: ' . $e->getMessage() );
-            return back()->back()->with('error', 'Create new account failed :(');
+        } catch (\Exception $e) {
+            Log::error('User registration failed: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Failed to create account. Please try again.',
+            ], 500);
         }
     }
 }

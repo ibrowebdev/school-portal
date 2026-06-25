@@ -18,7 +18,10 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('teacher/update') }}" method="POST">
+                        <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('teacher/update') }}" method="POST" class="x-submit" data-then="reload">
                             @csrf
                             <input type="hidden" class="form-control" name="id" value="{{ $teacher->id }}">
                             <div class="row">

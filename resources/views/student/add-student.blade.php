@@ -20,7 +20,10 @@
                 <div class="col-sm-12">
                     <div class="card comman-shadow">
                         <div class="card-body">
-                            <form action="{{ route('student/add/save') }}" method="POST" enctype="multipart/form-data">
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('student/add/save') }}" method="POST" enctype="multipart/form-data" class="x-submit" data-then="reload">
                                 @csrf
                                 <div class="row">
                                     <div class="col-12">

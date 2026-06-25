@@ -140,7 +140,10 @@
                     <p>Are you sure want to delete?</p>
                 </div>
                 <div class="modal-btn delete-action">
-                    <form action="{{ route('teacher/delete') }}" method="POST">
+                    <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('teacher/delete') }}" method="POST" class="x-submit" data-then="reload">
                         @csrf
                         <div class="row">
                             <input type="hidden" name="id" class="e_teacher_id" value="">

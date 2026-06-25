@@ -45,7 +45,10 @@
                         </div>
                         <div class="card-body">
 
-                            <form action="#" class="invoices-settings-form">
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="#" class="x-submit invoices-settings-form" data-then="reload">
                                 <div class="row align-items-center form-group">
                                     <label for="name" class="col-sm-3 col-form-label input-label">Invoice
                                         Status</label>

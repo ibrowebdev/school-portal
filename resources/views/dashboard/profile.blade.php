@@ -124,7 +124,10 @@
                                 <h5 class="card-title">Change Password</h5>
                                 <div class="row">
                                     <div class="col-md-10 col-lg-6">
-                                        <form action="{{ route('change/password') }}" method="POST">
+                                        <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('change/password') }}" method="POST" class="x-submit" data-then="reload">
                                             @csrf
                                             <div class="form-group">
                                                 <label>Old Password</label>

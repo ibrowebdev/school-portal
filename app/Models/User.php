@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     const STUDENT = 'student';
     const TEACHER = 'teacher';
@@ -17,63 +18,84 @@ class User extends Authenticatable
     const ADMIN = 'admin';
     const SUPER_ADMIN = 'super-admin';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'user_id',
         'name',
         'email',
+        'type',
         'join_date',
+        'date_of_birth',
         'phone_number',
         'status',
-        'role_name',
-        'email',
-        'role_name',
         'avatar',
         'position',
         'department',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-    protected static function boot()
+    protected function casts(): array
     {
-        parent::boot();
-        self::creating(function ($model) {
-            $getUser = self::orderBy('user_id', 'desc')->first();
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
-            if ($getUser) {
-                $latestID = intval(substr($getUser->user_id, 3));
-                $nextID = $latestID + 1;
-            } else {
-                $nextID = 1;
-            }
-            $model->user_id = '000' . sprintf("%03s", $nextID);
-            while (self::where('user_id', $model->user_id)->exists()) {
-                $nextID++;
-                $model->user_id = '000' . sprintf("%03s", $nextID);
+    /**
+     * Auto-generate a prefixed user_id on creation.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $model) {
+            if (empty($model->user_id)) {
+                $latest = static::orderByDesc('user_id')->value('user_id');
+                $nextID = $latest ? intval(substr($latest, 3)) + 1 : 1;
+                $model->user_id = '000' . sprintf('%03d', $nextID);
             }
         });
+    }
+
+    // ─── Type Helpers ───────────────────────────────────────
+
+    public function isStudent(): bool
+    {
+        return $this->type === self::STUDENT;
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->type === self::TEACHER;
+    }
+
+    public function isParent(): bool
+    {
+        return $this->type === self::PARENT;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->type === self::ADMIN;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->type === self::SUPER_ADMIN;
+    }
+
+    // ─── Relationships ──────────────────────────────────────
+
+    public function studentProfile(): HasOne
+    {
+        return $this->hasOne(Student::class, 'user_id', 'id');
+    }
+
+    public function teacherProfile(): HasOne
+    {
+        return $this->hasOne(Teacher::class, 'user_id', 'id');
     }
 }

@@ -8,29 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Subject extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'subject_id',
         'subject_name',
         'class',
     ];
 
-    /** auto genarate id */
-    protected static function boot()
+    /**
+     * Auto-generate a prefixed subject_id on creation.
+     */
+    protected static function booted(): void
     {
-        parent::boot();
-        self::creating(function ($model) {
-            $getUser = self::orderBy('subject_id', 'desc')->first();
-
-            if ($getUser) {
-                $latestID = intval(substr($getUser->subject_id, 5));
-                $nextID = $latestID + 1;
-            } else {
-                $nextID = 1;
-            }
-            $model->subject_id = 'PRE' . sprintf("%03s", $nextID);
-            while (self::where('subject_id', $model->subject_id)->exists()) {
-                $nextID++;
-                $model->subject_id = 'PRE' . sprintf("%03s", $nextID);
+        static::creating(function (Subject $model) {
+            if (empty($model->subject_id)) {
+                $latest = static::orderByDesc('subject_id')->value('subject_id');
+                $nextID = $latest ? intval(substr($latest, 3)) + 1 : 1;
+                $model->subject_id = 'PRE' . sprintf('%03d', $nextID);
             }
         });
     }

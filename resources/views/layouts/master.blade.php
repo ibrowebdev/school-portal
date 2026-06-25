@@ -36,7 +36,10 @@
             </div>
 
             <div class="top-nav-search">
-                <form>
+                <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form class="x-submit" data-then="reload">
                     <input type="text" class="form-control" placeholder="Search here">
                     <button class="btn" type="submit"><i class="fas fa-search"></i></button>
                 </form>

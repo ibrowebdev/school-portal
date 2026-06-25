@@ -36,7 +36,10 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <form action="#">
+                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="#" class="x-submit" data-then="reload">
                                                 <p class="checkbox-title">Customer Search</p>
                                                 <div class="form-custom">
                                                     <input type="text" class="form-control bg-grey"
@@ -86,7 +89,10 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <form action="#">
+                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="#" class="x-submit" data-then="reload">
                                                 <p class="checkbox-title">Date Filter</p>
                                                 <div class="selectBox-cont selectBox-cont-one h-auto">
                                                     <div class="date-picker">
@@ -124,7 +130,10 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <form action="#">
+                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="#" class="x-submit" data-then="reload">
                                                 <p class="checkbox-title">By Status</p>
                                                 <div class="selectBox-cont">
                                                     <label class="custom_check w-100">
@@ -166,7 +175,10 @@
                                             <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
                                         </div>
                                         <div id="checkBoxes">
-                                            <form action="#">
+                                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="#" class="x-submit" data-then="reload">
                                                 <p class="checkbox-title">Category</p>
                                                 <div class="form-custom">
                                                     <input type="text" class="form-control bg-grey"

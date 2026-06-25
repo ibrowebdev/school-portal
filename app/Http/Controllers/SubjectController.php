@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Subject;
-use Log;
-use DB;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
@@ -13,7 +13,8 @@ class SubjectController extends Controller
     public function subjectList()
     {
         $subjectList = Subject::all();
-        return view('subjects.subject_list',compact('subjectList'));
+
+        return view('subjects.subject_list', compact('subjectList'));
     }
 
     /** subject add */
@@ -23,115 +24,68 @@ class SubjectController extends Controller
     }
 
     /** Save Record */
-    public function saveRecord(Request $request)
+    public function saveRecord(Request $request): JsonResponse
     {
-        // Validate request input
-        $request->validate([
-            'subject_name' => 'required|string',
-            'class'        => 'required|string',
+        $validated = $request->validate([
+            'subject_name' => ['required', 'string'],
+            'class'        => ['required', 'string'],
         ]);
-        
-        DB::beginTransaction();
+
         try {
-            // Create a new Subject record
-            $saveRecord = new Subject;
-            $saveRecord->subject_name = $request->subject_name;
-            $saveRecord->class = $request->class;
-            $saveRecord->save();
+            Subject::create($validated);
 
-            // Commit the transaction
-            DB::commit();
-
-            // Log success
-            Log::info('Subject record saved successfully', [
-                'subject_name' => $request->subject_name,
-                'class' => $request->class,
-            ]);
-            return redirect()->back()->with('success', 'Subject record saved successfully!');
-
+            return response()->json(['message' => 'Subject record saved successfully!']);
         } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Failed to save Subject record', [
-                'error' => $e->getMessage(),
-                'request' => $request->all(),
-            ]);
-            return redirect()->back()->with('error', 'Failed to save Subject record: ' . $e->getMessage());
+            Log::error('Failed to save Subject record', ['error' => $e->getMessage()]);
+
+            return response()->json(['message' => 'Failed to save subject record.'], 500);
         }
     }
 
     /** subject edit view */
     public function subjectEdit($subject_id)
     {
-        $subjectEdit = Subject::where('subject_id',$subject_id)->first();
-        return view('subjects.subject_edit',compact('subjectEdit'));
+        $subjectEdit = Subject::where('subject_id', $subject_id)->firstOrFail();
+
+        return view('subjects.subject_edit', compact('subjectEdit'));
     }
 
     /** Update Record */
-    public function updateRecord(Request $request)
+    public function updateRecord(Request $request): JsonResponse
     {
-        DB::beginTransaction();
+        $validated = $request->validate([
+            'subject_id'   => ['required', 'string'],
+            'subject_name' => ['required', 'string'],
+            'class'        => ['required', 'string'],
+        ]);
+
         try {
-            // Prepare update data
-            $updateRecord = [
-                'subject_name' => $request->subject_name,
-                'class'        => $request->class,
-            ];
-    
-            // Update the Subject record
-            Subject::where('subject_id', $request->subject_id)->update($updateRecord);
-    
-            // Commit the transaction
-            DB::commit();
-    
-            // Log success
-            Log::info('Subject record updated successfully', [
-                'subject_id'   => $request->subject_id,
-                'subject_name' => $request->subject_name,
-                'class'        => $request->class,
-            ]);
-            return redirect()->back()->with('success', 'Subject record updated successfully!');
-    
+            $subject = Subject::where('subject_id', $validated['subject_id'])->firstOrFail();
+            $subject->update($validated);
+
+            return response()->json(['message' => 'Subject record updated successfully!']);
         } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Failed to update Subject record', [
-                'error'   => $e->getMessage(),
-                'subject_id' => $request->subject_id,
-                'request' => $request->all(),
-            ]);
-            return redirect()->back()->with('error', 'Failed to update Subject record: ' . $e->getMessage());
+            Log::error('Failed to update Subject record', ['error' => $e->getMessage()]);
+
+            return response()->json(['message' => 'Failed to update subject record.'], 500);
         }
     }
 
     /** Delete Record */
-    public function deleteRecord(Request $request)
+    public function deleteRecord(Request $request): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $subject = Subject::where('subject_id', $request->subject_id)->first();
-            if ($subject) {
-                Log::info('Subject record deleted', [
-                    'subject_id'   => $request->subject_id,
-                    'subject_name' => $subject->subject_name,
-                ]);
-                $subject->delete();
-                DB::commit();
-                return redirect()->back()->with('success', 'Subject record deleted successfully!');
-            } else {
-                Log::warning('Subject record not found for deletion', [
-                    'subject_id' => $request->subject_id,
-                ]);
+        $validated = $request->validate([
+            'subject_id' => ['required', 'string'],
+        ]);
 
-                return redirect()->back()->with('error', 'Subject record not found!');
-            }
+        try {
+            Subject::where('subject_id', $validated['subject_id'])->firstOrFail()->delete();
+
+            return response()->json(['message' => 'Subject record deleted successfully!']);
         } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Failed to delete Subject record', [
-                'error'   => $e->getMessage(),
-                'subject_id' => $request->subject_id,
-                'request' => $request->all(),
-            ]);
-            return redirect()->back()->with('error', 'Failed to delete Subject record: ' . $e->getMessage());
+            Log::error('Failed to delete Subject record', ['error' => $e->getMessage()]);
+
+            return response()->json(['message' => 'Failed to delete subject record.'], 500);
         }
     }
-
 }

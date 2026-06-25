@@ -125,7 +125,10 @@
                     </div>
                     <div class="modal-btn delete-action">
                         <div class="row">
-                            <form action="{{ route('subject/delete') }}" method="POST">
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('subject/delete') }}" method="POST" class="x-submit" data-then="reload">
                                 @csrf
                                 <input type="hidden" name="subject_id" class="e_subject_id" value="">
                                 <div class="row">

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Department extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'department_id',
         'department_name',
@@ -16,22 +17,24 @@ class Department extends Model
         'no_of_students',
     ];
 
-    protected static function boot()
+    protected function casts(): array
     {
-        parent::boot();
-        self::creating(function ($model) {
-            $getUser = self::orderBy('department_id', 'desc')->first();
+        return [
+            'department_start_date' => 'date',
+            'no_of_students' => 'integer',
+        ];
+    }
 
-            if ($getUser) {
-                $latestID = intval(substr($getUser->department_id, 5));
-                $nextID = $latestID + 1;
-            } else {
-                $nextID = 1;
-            }
-            $model->department_id = 'PRE_' . sprintf("%05s", $nextID);
-            while (self::where('department_id', $model->department_id)->exists()) {
-                $nextID++;
-                $model->department_id = 'PRE_' . sprintf("%05s", $nextID);
+    /**
+     * Auto-generate a prefixed department_id on creation.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Department $model) {
+            if (empty($model->department_id)) {
+                $latest = static::orderByDesc('department_id')->value('department_id');
+                $nextID = $latest ? intval(substr($latest, 5)) + 1 : 1;
+                $model->department_id = 'PRE_' . sprintf('%05d', $nextID);
             }
         });
     }

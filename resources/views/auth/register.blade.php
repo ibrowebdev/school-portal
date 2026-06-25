@@ -5,43 +5,44 @@
         <div class="login-right-wrap">
             <h1>Sign Up</h1>
             <p class="account-subtitle">Enter details to create your account</p>
-            <form action="{{ route('register') }}" method="POST">
+
+            {{-- Error container for AJAX validation errors --}}
+            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+
+            <form action="{{ route('register') }}" method="POST" class="x-submit" data-then="redirect:{{ route('login') }}">
                 @csrf
                 <div class="form-group">
                     <label>Full Name <span class="login-danger">*</span></label>
-                    <input type="text" class="form-control @error('name') is-invalid @enderror" name="name">
+                    <input type="text" class="form-control" name="name" required>
                     <span class="profile-views"><i class="fas fa-user-circle"></i></span>
                 </div>
                 <div class="form-group">
                     <label>Email <span class="login-danger">*</span></label>
-                    <input type="email" class="form-control @error('email') is-invalid @enderror" name="email">
+                    <input type="email" class="form-control" name="email" required>
                     <span class="profile-views"><i class="fas fa-envelope"></i></span>
                 </div>
                 {{-- insert defaults --}}
                 <input type="hidden" class="image" name="image" value="photo_defaults.jpg">
                 <div class="form-group local-forms">
                     <label>Role Name <span class="login-danger">*</span></label>
-                    <select class="form-control select @error('role_name') is-invalid @enderror" name="role_name" id="role_name">
-                        <option selected disabled>Role Type</option>
-                        @foreach ($role as $name)
-                            <option value="{{ $name->role_type }}">{{ $name->role_type }}</option>
+                    <select class="form-control select" name="role_name" id="role_name" required>
+                        <option selected disabled value="">Select Role</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role }}">{{ ucfirst($role) }}</option>
                         @endforeach
                     </select>
-                    @error('role_name')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
                 </div>
-                
+
                 <div class="form-group">
                     <label>Password <span class="login-danger">*</span></label>
-                    <input type="password" class="form-control pass-input  @error('password') is-invalid @enderror" name="password">
+                    <input type="password" class="form-control pass-input" name="password" required>
                     <span class="profile-views feather-eye toggle-password"></span>
                 </div>
                 <div class="form-group">
                     <label>Confirm password <span class="login-danger">*</span></label>
-                    <input type="password" class="form-control pass-confirm @error('password_confirmation') is-invalid @enderror" name="password_confirmation">
+                    <input type="password" class="form-control pass-confirm" name="password_confirmation" required>
                     <span class="profile-views feather-eye reg-toggle-password"></span>
                 </div>
                 <div class=" dont-have">Already Registered? <a href="{{ route('login') }}">Login</a></div>

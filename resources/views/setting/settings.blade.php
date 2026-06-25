@@ -50,7 +50,10 @@
                             <h5 class="card-title">Website Basic Details</h5>
                         </div>
                         <div class="card-body pt-0">
-                            <form>
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form class="x-submit" data-then="reload">
                                 <div class="settings-form">
                                     <div class="form-group">
                                         <label>Website Name <span class="star-red">*</span></label>
@@ -123,7 +126,10 @@
                             <h5 class="card-title">Address Details</h5>
                         </div>
                         <div class="card-body pt-0">
-                            <form>
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form class="x-submit" data-then="reload">
                                 <div class="settings-form">
                                     <div class="form-group">
                                         <label>Address Line 1 <span class="star-red">*</span></label>

@@ -28,7 +28,10 @@
                 <div class="col-md-12">
                     <div class="card invoices-add-card">
                         <div class="card-body">
-                            <form action="{{ route('invoice/update/save') }}" class="invoices-form" method="POST" enctype="multipart/form-data">
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('invoice/update/save') }}" class="x-submit invoices-form" method="POST" enctype="multipart/form-data"> data-then="reload"
                                 @csrf
                                 <input type="hidden" name="invoice_id" value="{{ $invoiceView->invoice_id }}">
                                 <div class="invoices-main-form">
@@ -590,7 +593,10 @@
                         <p>Are you sure want to delete?</p>
                     </div>
                     <div class="modal-btn delete-action">
-                        <form action="{{ route('invoice/delete') }}" method="POST">
+                        <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('invoice/delete') }}" method="POST" class="x-submit" data-then="reload">
                             @csrf
                             <div class="row">
                                 <input type="hidden" name="invoice_id" value="{{ $invoiceView->invoice_id }}">

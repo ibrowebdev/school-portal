@@ -28,7 +28,10 @@
                 <div class="col-md-12">
                     <div class="card invoices-add-card">
                         <div class="card-body">
-                            <form action="{{ route('invoice/add/save') }}" class="invoices-form" method="POST" enctype="multipart/form-data">
+                            <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('invoice/add/save') }}" class="x-submit invoices-form" method="POST" enctype="multipart/form-data"> data-then="reload"
                                 @csrf
                                 <div class="invoices-main-form">
                                     <div class="row">

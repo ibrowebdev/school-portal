@@ -81,7 +81,10 @@
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
-                        <form action="{{ route('user/delete') }}" method="POST">
+                        <div id="form-errors-container" class="hidden alert alert-danger">
+                <ul id="form-errors-list" class="mb-0"></ul>
+            </div>
+            <form action="{{ route('user/delete') }}" method="POST" class="x-submit" data-then="reload">
                             @csrf
                             <input type="hidden" name="user_id" class="e_user_id" value="">
                             <input type="hidden" name="avatar" class="e_avatar" value= "">
