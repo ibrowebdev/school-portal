@@ -1,65 +1,36 @@
-
 @extends('layouts.master')
 @section('content')
-    <div class="page-wrapper">
-        <div class="content container-fluid">
-            <div class="page-header">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-sub-header">
-                            <h3 class="page-title">Students</h3>
-                            <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('students.index') }}">Student</a></li>
-                                <li class="breadcrumb-item active">All Students</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="space-y-6">
+    <x-page-header title="Students" parent="Student" :parentRoute="route('students.index')" />
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card card-table comman-shadow">
-                        <div class="card-body pb-0">
-                            <div class="page-header">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h3 class="page-title">Students</h3>
-                                    </div>
-                                    <div class="col-auto text-end float-end ms-auto download-grp">
-                                        <a href="{{ route('students.index') }}" class="btn btn-outline-gray me-2"><i class="fa fa-list"></i></a>
-                                        <a href="{{ route('student/grid') }}" class="btn btn-outline-gray me-2 active"><i class="fa fa-th"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="student-pro-list">
-                                <div class="row">
-                                    @foreach ($studentList as $key=>$list )
-                                    <div class="col-xl-3 col-lg-4 col-md-6 d-flex">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="student-box flex-fill">
-                                                    <div class="student-img">
-                                                        <a href="{{ url('student/profile/'.$list->id) }}">
-                                                            <img class="img-fluid" alt="Students Info" src="{{ asset($list->upload) }}" width="20%" height="20%">
-                                                        </a>
-                                                    </div>
-                                                    <div class="student-content pb-0">
-                                                        <h5><a href="{{ url('student/profile/'.$list->id) }}">{{ $list->first_name }} {{ $list->last_name }}</a></h5>
-                                                        <h6>Student</h6>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <x-card noPadding="true">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-gray-800">Students</h3>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('students.index') }}" class="w-10 h-10 border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center hover:bg-gray-50 transition">
+                    <i class="fa fa-list"></i>
+                </a>
+                <a href="{{ route('student/grid') }}" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-sm">
+                    <i class="fa fa-th"></i>
+                </a>
             </div>
         </div>
-    </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @foreach ($studentList as $key=>$list)
+                    <div class="bg-white border border-gray-100 rounded-xl p-6 text-center hover:shadow-md transition-shadow">
+                        <a href="{{ url('student/profile/'.$list->id) }}" class="inline-block mb-4">
+                            <img class="w-24 h-24 rounded-full object-cover border-4 border-gray-50 shadow-sm mx-auto" alt="Student Photo" src="{{ asset($list->upload) }}">
+                        </a>
+                        <h5 class="text-lg font-bold text-gray-800 mb-1">
+                            <a href="{{ url('student/profile/'.$list->id) }}" class="hover:text-blue-600 transition">{{ $list->first_name }} {{ $list->last_name }}</a>
+                        </h5>
+                        <p class="text-sm text-gray-500 font-medium">Student</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </x-card>
+</div>
 @endsection

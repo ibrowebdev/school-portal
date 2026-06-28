@@ -1,73 +1,34 @@
-
 @extends('layouts.master')
 @section('content')
-    <div class="page-wrapper">
-        <div class="content container-fluid">
-            <div class="page-header">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h3 class="page-title">Edit Department</h3>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="departments.html">Department</a></li>
-                            <li class="breadcrumb-item active">Edit Department</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form action="{{ route('department/update') }}" method="POST" class="x-submit" data-then="reload">
-                                @csrf
-                                <div class="row">
-                                    <div class="col-12">
-                                        <h5 class="form-title"><span>Department Details</span></h5>
-                                    </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div class="form-group local-forms">
-                                            <label>Department ID <span class="login-danger">*</span></label>
-                                            <input type="text" class="form-control" name="department_id" value="{{ $department->department_id }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div class="form-group local-forms">
-                                            <label>Department Name <span class="login-danger">*</span></label>
-                                            <input type="text" class="form-control" name="department_name" value="{{ $department->department_name }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div class="form-group local-forms">
-                                            <label>Head of Department <span class="login-danger">*</span></label>
-                                            <input type="text" class="form-control" name="head_of_department" value="{{ $department->head_of_department }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div class="form-group local-forms calendar-icon">
-                                            <label>Department Start Date <span class="login-danger">*</span></label>
-                                            <input class="form-control datetimepicker" type="text"placeholder="DD-MM-YYYY" name="department_start_date" value="{{ $department->department_start_date }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-4">
-                                        <div class="form-group local-forms">
-                                            <label>No of Students <span class="login-danger">*</span></label>
-                                            <input type="text" class="form-control" name="no_of_students" value="{{ $department->no_of_students }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="student-submit">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="space-y-6">
+    <x-page-header title="Edit Department" parent="Department" :parentRoute="route('departments.index')" />
+
+    <x-card title="Department Details">
+        <div id="form-errors-container" class="hidden bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-200" style="display: none;">
+            <ul id="form-errors-list" class="list-disc pl-5 mb-0 text-sm"></ul>
         </div>
-    </div>
+        
+        <form action="{{ route('department/update') }}" method="POST" class="x-submit" data-then="reload">
+            @csrf
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <x-form.input name="department_id" label="Department ID" required="true" :value="$department->department_id" readonly="true" />
+                
+                <x-form.input name="department_name" label="Department Name" required="true" :value="$department->department_name" />
+                
+                <x-form.input name="head_of_department" label="Head of Department" required="true" :value="$department->head_of_department" />
+                
+                <x-form.input name="department_start_date" label="Department Start Date" required="true" class="datetimepicker" placeholder="DD-MM-YYYY" :value="$department->department_start_date" />
+                
+                <x-form.input name="no_of_students" label="No of Students" required="true" :value="$department->no_of_students" />
+            </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors shadow-sm">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </x-card>
+</div>
 @endsection

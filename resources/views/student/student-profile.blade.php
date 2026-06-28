@@ -1,246 +1,198 @@
-
 @extends('layouts.master')
 @section('content')
-    <div class="page-wrapper">
-        <div class="content container-fluid">
-            <div class="page-header">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-sub-header">
-                            <h3 class="page-title">Student Details</h3>
-                            <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ route('students.create') }}">Student</a></li>
-                                <li class="breadcrumb-item active">Student Details</li>
-                            </ul>
-                        </div>
+<div class="space-y-6">
+    <x-page-header title="Student Details" parent="Student" :parentRoute="route('students.create')" />
+
+    <!-- Profile Header Card -->
+    <x-card noPadding="true">
+        <div class="relative">
+            <!-- Background Image -->
+            <div class="h-48 w-full bg-cover bg-center" style="background-image: url('{{ URL::to('assets/img/profile-bg.jpg') }}');"></div>
+            
+            <div class="px-6 py-4 flex flex-col md:flex-row items-center md:items-end md:-mt-12 gap-6 relative z-10">
+                <!-- Profile Image -->
+                <div class="relative shrink-0 -mt-20 md:mt-0">
+                    <img src="{{ Storage::url('student-photos/'.$studentProfile->upload) }}" alt="Profile" class="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover bg-white">
+                    <label class="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center cursor-pointer shadow-sm hover:bg-blue-700 transition">
+                        <i class="far fa-edit text-sm"></i>
+                        <input type="file" class="hidden">
+                    </label>
+                </div>
+                
+                <!-- Profile Info -->
+                <div class="flex-1 text-center md:text-left">
+                    <h4 class="text-2xl font-bold text-gray-800">{{ $studentProfile->first_name }} {{ $studentProfile->last_name }}</h4>
+                    <p class="text-gray-500 font-medium">Computer Science</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="flex items-center gap-6 text-center">
+                    <div>
+                        <h5 class="text-xs text-gray-500 uppercase font-bold tracking-wider">Followers</h5>
+                        <h4 class="text-xl font-bold text-gray-800">2,850</h4>
+                    </div>
+                    <div>
+                        <h5 class="text-xs text-gray-500 uppercase font-bold tracking-wider">Following</h5>
+                        <h4 class="text-xl font-bold text-gray-800">340</h4>
+                    </div>
+                    <div>
+                        <h5 class="text-xs text-gray-500 uppercase font-bold tracking-wider">Friends</h5>
+                        <h4 class="text-xl font-bold text-gray-800">120</h4>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="about-info">
-                                <h4>Profile <span><a href="javascript:;"><i class="feather-more-vertical"></i></a></span></h4>
-                            </div>
-                            <div class="student-profile-head">
-                                <div class="profile-bg-img">
-                                    <img src="{{ URL::to('assets/img/profile-bg.jpg') }}" alt="Profile">
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-4 col-md-4">
-                                        <div class="profile-user-box">
-                                            <div class="profile-user-img">
-                                                <img src="{{ Storage::url('student-photos/'.$studentProfile->upload) }}" alt="Profile">
-                                                <div class="form-group students-up-files profile-edit-icon mb-0">
-                                                    <div class="uplod d-flex">
-                                                        <label class="file-upload profile-upbtn mb-0">
-                                                            <i class="far fa-edit me-2-3"></i><input type="file">
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="names-profiles">
-                                                <h4>{{ $studentProfile->first_name }} {{ $studentProfile->last_name }}</h4>
-                                                <h5>Computer Science</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 d-flex align-items-center">
-                                        <div class="follow-group">
-                                            <div class="students-follows">
-                                                <h5>Followers</h5>
-                                                <h4>2850</h4>
-                                            </div>
-                                            <div class="students-follows">
-                                                <h5>Followers</h5>
-                                                <h4>2850</h4>
-                                            </div>
-                                            <div class="students-follows">
-                                                <h5>Followers</h5>
-                                                <h4>2850</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 d-flex align-items-center">
-                                        <div class="follow-btn-group">
-                                            <button type="submit" class="btn btn-info follow-btns">Follow</button>
-                                            <button type="submit" class="btn btn-info message-btns">Message</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="student-personals-grp">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="heading-detail">
-                                            <h4>Personal Details :</h4>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <i class="feather-user"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Name</h4>
-                                                <h5>{{ $studentProfile->first_name }} {{ $studentProfile->last_name }}</h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <img src="{{ URL::to('assets/img/icons/buliding-icon.svg') }}" alt="">
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Department </h4>
-                                                <h5>Computer Science</h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <i class="feather-phone-call"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Mobile</h4>
-                                                <h5>{{ $studentProfile->phone_number }}</h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <i class="feather-mail"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Email</h4>
-                                                <h5><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="81e5e0e8f2f8c1e6ece0e8edafe2eeec">{{ $studentProfile->email }}</a>
-                                                </h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <i class="feather-user"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Gender</h4>
-                                                <h5>{{ $studentProfile->gender }}</h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <i class="feather-calendar"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Date of Birth</h4>
-                                                <h5>{{ $studentProfile->date_of_birth }}</h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity">
-                                            <div class="personal-icons">
-                                                <i class="feather-italic"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Language</h4>
-                                                <h5>English, French, Bangla</h5>
-                                            </div>
-                                        </div>
-                                        <div class="personal-activity mb-0">
-                                            <div class="personal-icons">
-                                                <i class="feather-map-pin"></i>
-                                            </div>
-                                            <div class="views-personal">
-                                                <h4>Address</h4>
-                                                <h5>480, Estern Avenue, New York</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="student-personals-grp">
-                                <div class="card mb-0">
-                                    <div class="card-body">
-                                        <div class="heading-detail">
-                                            <h4>Skills:</h4>
-                                        </div>
-                                        <div class="skill-blk">
-                                            <div class="skill-statistics">
-                                                <div class="skills-head">
-                                                    <h5>Photoshop</h5>
-                                                    <p>90%</p>
-                                                </div>
-                                                <div class="progress mb-0">
-                                                    <div class="progress-bar bg-photoshop" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                            <div class="skill-statistics">
-                                                <div class="skills-head">
-                                                    <h5>Code editor</h5>
-                                                    <p>75%</p>
-                                                </div>
-                                                <div class="progress mb-0">
-                                                    <div class="progress-bar bg-editor" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                            <div class="skill-statistics mb-0">
-                                                <div class="skills-head">
-                                                    <h5>Illustrator</h5>
-                                                    <p>95%</p>
-                                                </div>
-                                                <div class="progress mb-0">
-                                                    <div class="progress-bar bg-illustrator" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="student-personals-grp">
-                                <div class="card mb-0">
-                                    <div class="card-body">
-                                        <div class="heading-detail">
-                                            <h4>About Me</h4>
-                                        </div>
-                                        <div class="hello-park">
-                                            <h5>Hello I am Daisy Parks</h5>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                                                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-                                                ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                                                aliquip ex commodo consequat. Duis aute irure dolor in reprehenderit
-                                                in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                                Excepteur officia deserunt mollit anim id est laborum.</p>
-                                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                                                accusantium doloremque laudantium, totam inventore veritatis et
-                                                quasi architecto beatae vitae dicta sunt explicabo. </p>
-                                        </div>
-                                        <div class="hello-park">
-                                            <h5>Education</h5>
-                                            <div class="educate-year">
-                                                <h6>2008 - 2009</h6>
-                                                <p>Secondary Schooling at xyz school of secondary education, Mumbai.
-                                                </p>
-                                            </div>
-                                            <div class="educate-year">
-                                                <h6>2011 - 2012</h6>
-                                                <p>Higher Secondary Schooling at xyz school of higher secondary education, Mumbai.</p>
-                                            </div>
-                                            <div class="educate-year">
-                                                <h6>2012 - 2015</h6>
-                                                <p>Bachelor of Science at Abc College of Art and Science, Chennai.</p>
-                                            </div>
-                                            <div class="educate-year">
-                                                <h6>2015 - 2017</h6>
-                                                <p class="mb-0">Master of Science at Cdm College of Engineering and Technology, Pune.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3">
+                    <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium">Follow</button>
+                    <button class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition shadow-sm font-medium">Message</button>
                 </div>
             </div>
         </div>
+    </x-card>
+
+    <!-- Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Personal Details -->
+            <x-card title="Personal Details">
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <i class="feather-user"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Name</p>
+                            <p class="text-gray-800 font-medium">{{ $studentProfile->first_name }} {{ $studentProfile->last_name }}</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <img src="{{ URL::to('assets/img/icons/buliding-icon.svg') }}" alt="" class="w-4 h-4 opacity-75">
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Department</p>
+                            <p class="text-gray-800 font-medium">Computer Science</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <i class="feather-phone-call"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Mobile</p>
+                            <p class="text-gray-800 font-medium">{{ $studentProfile->phone_number }}</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <i class="feather-mail"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Email</p>
+                            <a href="mailto:{{ $studentProfile->email }}" class="text-blue-600 hover:underline font-medium">{{ $studentProfile->email }}</a>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <i class="feather-user"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Gender</p>
+                            <p class="text-gray-800 font-medium">{{ $studentProfile->gender }}</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <i class="feather-calendar"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Date of Birth</p>
+                            <p class="text-gray-800 font-medium">{{ $studentProfile->date_of_birth }}</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <i class="feather-map-pin"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 font-medium text-xs uppercase tracking-wider mb-0.5">Address</p>
+                            <p class="text-gray-800 font-medium">480, Estern Avenue, New York</p>
+                        </div>
+                    </li>
+                </ul>
+            </x-card>
+
+            <!-- Skills -->
+            <x-card title="Skills">
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-medium text-gray-700">Photoshop</span>
+                            <span class="text-gray-500">90%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-medium text-gray-700">Code Editor</span>
+                            <span class="text-gray-500">75%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-medium text-gray-700">Illustrator</span>
+                            <span class="text-gray-500">95%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-pink-600 h-2 rounded-full" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+            </x-card>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <x-card title="About Me">
+                <div class="prose max-w-none text-sm text-gray-600">
+                    <h5 class="text-base font-bold text-gray-800 mb-2">Hello I am {{ $studentProfile->first_name }} {{ $studentProfile->last_name }}</h5>
+                    <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex commodo consequat.</p>
+                    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                </div>
+                
+                <hr class="my-6 border-gray-100">
+                
+                <h5 class="text-base font-bold text-gray-800 mb-4">Education</h5>
+                <div class="space-y-4">
+                    <div class="relative pl-4 border-l-2 border-blue-500 pb-4">
+                        <div class="absolute w-3 h-3 bg-white border-2 border-blue-500 rounded-full -left-[7px] top-1"></div>
+                        <h6 class="text-sm font-bold text-gray-800 mb-1">2008 - 2009</h6>
+                        <p class="text-sm text-gray-600">Secondary Schooling at xyz school of secondary education, Mumbai.</p>
+                    </div>
+                    <div class="relative pl-4 border-l-2 border-blue-500 pb-4">
+                        <div class="absolute w-3 h-3 bg-white border-2 border-blue-500 rounded-full -left-[7px] top-1"></div>
+                        <h6 class="text-sm font-bold text-gray-800 mb-1">2011 - 2012</h6>
+                        <p class="text-sm text-gray-600">Higher Secondary Schooling at xyz school of higher secondary education, Mumbai.</p>
+                    </div>
+                    <div class="relative pl-4 border-l-2 border-blue-500 pb-4">
+                        <div class="absolute w-3 h-3 bg-white border-2 border-blue-500 rounded-full -left-[7px] top-1"></div>
+                        <h6 class="text-sm font-bold text-gray-800 mb-1">2012 - 2015</h6>
+                        <p class="text-sm text-gray-600">Bachelor of Science at Abc College of Art and Science, Chennai.</p>
+                    </div>
+                    <div class="relative pl-4 border-l-2 border-transparent">
+                        <div class="absolute w-3 h-3 bg-white border-2 border-blue-500 rounded-full -left-[7px] top-1"></div>
+                        <h6 class="text-sm font-bold text-gray-800 mb-1">2015 - 2017</h6>
+                        <p class="text-sm text-gray-600">Master of Science at Cdm College of Engineering and Technology, Pune.</p>
+                    </div>
+                </div>
+            </x-card>
+        </div>
     </div>
+</div>
 @endsection

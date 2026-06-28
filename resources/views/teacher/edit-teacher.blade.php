@@ -1,184 +1,55 @@
-
 @extends('layouts.master')
 @section('content')
-<div class="page-wrapper">
-    <div class="content container-fluid">
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h3 class="page-title">Edit Teachers</h3>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('teachers.index') }}">Teachers</a></li>
-                        <li class="breadcrumb-item active">Edit Teachers</li>
-                    </ul>
-                </div>
-            </div>
+<div class="space-y-6">
+    <x-page-header title="Edit Teachers" parent="Teachers" :parentRoute="route('teachers.index')" />
+
+    <x-card title="Basic Details">
+        <div id="form-errors-container" class="hidden bg-red-50 text-red-600 p-4 rounded-lg mb-6 border border-red-200" style="display: none;">
+            <ul id="form-errors-list" class="list-disc pl-5 mb-0 text-sm"></ul>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
+        
+        <form action="{{ route('teachers.update', $teacher->id) }}" method="POST" class="x-submit" data-then="reload">
+            @csrf
+            @method('PUT')
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <x-form.input name="full_name" label="Name" required="true" :value="$teacher->full_name" placeholder="Enter Name" />
+                
+                <x-form.select name="gender" label="Gender" required="true" :selected="$teacher->gender" :options="['Female' => 'Female', 'Male' => 'Male', 'Others' => 'Others']" />
+                
+                <x-form.input name="date_of_birth" label="Date Of Birth" required="true" class="datetimepicker" :value="$teacher->date_of_birth" placeholder="DD-MM-YYYY" />
+                
+                <x-form.input name="joining_date" label="Joining Date" required="true" :value="$teacher->join_date" readonly="true" />
+                
+                <x-form.input name="qualification" label="Qualification" required="true" class="datetimepicker" :value="$teacher->qualification" placeholder="Enter Joining Date" />
+                
+                <x-form.input name="experience" label="Experience" required="true" :value="$teacher->experience" placeholder="Enter Experience" />
             </div>
-            <form action="{{ route('teachers.update', $teacher->id) }}" method="POST" class="x-submit" data-then="reload">
-                                @csrf
-                                @method('PUT')
-                            <div class="row">
-                                <div class="col-12">
-                                    <h5 class="form-title"><span>Basic Details</span></h5>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>Name <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('full_name') is-invalid @enderror" name="full_name" placeholder="Enter Name" value="{{ $teacher->full_name }}">
-                                        @error('full_name')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>Gender <span class="login-danger">*</span></label>
-                                        <select class="form-control select  @error('gender') is-invalid @enderror" name="gender">
-                                            <option selected disabled>Select Gender</option>
-                                            <option value="Female" {{ $teacher->gender == 'Female' ? "selected" :"Female"}}>Female</option>
-                                            <option value="Male" {{ $teacher->gender == 'Male' ? "selected" :""}}>Male</option>
-                                            <option value="Others" {{ $teacher->gender == 'Others' ? "selected" :""}}>Others</option>
-                                        </select>
-                                        @error('gender')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms calendar-icon">
-                                        <label>Date Of Birth <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control datetimepicker @error('date_of_birth') is-invalid @enderror" name="date_of_birth" placeholder="DD-MM-YYYY" value="{{ $teacher->date_of_birth }}">
-                                        @error('date_of_birth')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms calendar-icon">
-                                        <label>Joining Date <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('joining_date') is-invalid @enderror" name="joining_date" value="{{ $teacher->join_date}}" readonly>
-                                        @error('joining_date')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4 local-forms">
-                                    <div class="form-group local-forms calendar-icon">
-                                        <label>Qualification <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control datetimepicker @error('qualification') is-invalid @enderror" name="qualification" placeholder="Enter Joining Date" value="{{ $teacher->qualification }}">
-                                        @error('qualification')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>Experience <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('experience') is-invalid @enderror" name="experience" placeholder="Enter Experience" value="{{ $teacher->experience }}">
-                                        @error('experience')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <h5 class="form-title"><span>Address</span></h5>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group local-forms">
-                                        <label>Address <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('address') is-invalid @enderror" name="address" placeholder="Enter address" value="{{ $teacher->address }}">
-                                        @error('address')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group local-forms">
-                                        <label>Phone <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" placeholder="Enter phone number" value="{{ $teacher->phone_number }}">
-                                        @error('phone_number')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>City <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('city') is-invalid @enderror" name="city" placeholder="Enter City" value="{{ $teacher->city }}">
-                                        @error('city')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>State <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('state') is-invalid @enderror" name="state" placeholder="Enter State" value="{{ $teacher->state }}">
-                                        @error('state')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>Zip Code <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('zip_code') is-invalid @enderror" name="zip_code" placeholder="Enter Zip" value="{{ $teacher->zip_code }}">
-                                        @error('zip_code')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="form-group local-forms">
-                                        <label>Country <span class="login-danger">*</span></label>
-                                        <input type="text" class="form-control @error('country') is-invalid @enderror" name="country" placeholder="Enter Country" value="{{ $teacher->country }}">
-                                        @error('country')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="student-submit">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+
+            <h5 class="text-lg font-bold text-gray-800 mb-6 border-b border-gray-100 pb-2">Address</h5>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="md:col-span-2">
+                    <x-form.input name="address" label="Address" required="true" :value="$teacher->address" placeholder="Enter address" />
                 </div>
+                
+                <x-form.input name="phone_number" label="Phone" required="true" :value="$teacher->phone_number" placeholder="Enter phone number" />
+                
+                <x-form.input name="city" label="City" required="true" :value="$teacher->city" placeholder="Enter City" />
+                
+                <x-form.input name="state" label="State" required="true" :value="$teacher->state" placeholder="Enter State" />
+                
+                <x-form.input name="zip_code" label="Zip Code" required="true" :value="$teacher->zip_code" placeholder="Enter Zip" />
+                
+                <x-form.input name="country" label="Country" required="true" :value="$teacher->country" placeholder="Enter Country" />
             </div>
-        </div>
-    </div>
+            
+            <div class="mt-8 flex justify-end">
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors shadow-sm">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </x-card>
 </div>
 @endsection

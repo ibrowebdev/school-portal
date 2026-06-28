@@ -1,114 +1,87 @@
 @extends('layouts.master')
 @section('content')
-<div class="page-wrapper">
-    <div class="content container-fluid">
+<div class="space-y-6">
+    <x-page-header title="Departments" parent="Dashboard" :parentRoute="url('home')" />
 
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h3 class="page-title">Departments</h3>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Departments</li>
-                    </ul>
-                </div>
+    <!-- Search Filter -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search ID</label>
+                <input type="text" id="department_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by ID...">
             </div>
-        </div>
-
-        <div class="student-group-form">
-            <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="department_id" placeholder="Search by ID ...">
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="department_name" placeholder="Search by Name ...">
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="form-group">
-                        <input type="text" class="form-control"  placeholder="Search by Year ...">
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="search-student-btn">
-                        <button type="btn" class="btn btn-primary">Search</button>
-                    </div>
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search Name</label>
+                <input type="text" id="department_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by Name...">
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card card-table">
-                    <div class="card-body">
-
-                        <div class="page-header">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h3 class="page-title">Departments</h3>
-                                </div>
-                                <div class="col-auto text-end float-end ms-auto download-grp">
-                                    <a href="#" class="btn btn-outline-primary me-2">
-                                        <i class="fas fa-download"></i> Download
-                                    </a>
-                                    <a href="{{ route('departments.create') }}" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <table class="table table-stripped table table-hover table-center mb-0" id="dataList">
-                            <thead class="student-thread">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>HOD</th>
-                                    <th>Started Year</th>
-                                    <th>No of Students</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search Year</label>
+                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by Year...">
+            </div>
+            <div>
+                <button type="button" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm font-medium">
+                    Search
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Data Table Card -->
+    <x-card noPadding="true">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h3 class="text-lg font-bold text-gray-800">Departments</h3>
+            <div class="flex items-center gap-2">
+                <a href="#" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition flex items-center gap-2 text-sm font-medium">
+                    <i class="fas fa-download"></i> Download
+                </a>
+                <a href="{{ route('departments.create') }}" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition shadow-sm">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto p-4">
+            <table class="w-full text-sm text-left" id="dataList">
+                <thead class="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-4">ID</th>
+                        <th class="px-6 py-4">Name</th>
+                        <th class="px-6 py-4">HOD</th>
+                        <th class="px-6 py-4">Started Year</th>
+                        <th class="px-6 py-4">No of Students</th>
+                        <th class="px-6 py-4 text-right">Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </x-card>
 </div>
 
-{{-- model elete --}}
+{{-- model delete --}}
 <div class="modal custom-modal fade" id="delete" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="form-header">
-                    <h3>Delete Department</h3>
-                    <p>Are you sure want to delete?</p>
+        <div class="modal-content rounded-xl border-0 shadow-lg">
+            <div class="modal-body p-6 text-center">
+                <div class="mb-6">
+                    <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Department</h3>
+                    <p class="text-gray-500">Are you sure want to delete?</p>
                 </div>
                 <div class="modal-btn delete-action">
-                    <div class="row">
-                        <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form action="{{ route('departments.destroy', $record->id ?? $department->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
-                                @csrf
-                                @method('DELETE')
-                            <input type="hidden" name="department_id" class="e_department_id" value="">
-                            <div class="row">
-                                <div class="col-6">
-                                    <button type="submit" class="btn btn-primary paid-continue-btn" style="width: 100%;">Delete</button>
-                                </div>
-                                <div class="col-6">
-                                    <a data-bs-dismiss="modal"
-                                        class="btn btn-primary paid-cancel-btn">Cancel
-                                    </a>
-                                </div>
-                            </div>
-                        </form>
+                    <div id="form-errors-container" class="hidden alert alert-danger" style="display: none;">
+                        <ul id="form-errors-list" class="mb-0"></ul>
                     </div>
+                    <form action="{{ route('departments.destroy', $record->id ?? $department->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="department_id" class="e_department_id" value="">
+                        <div class="flex items-center justify-center gap-4">
+                            <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium w-full sm:w-auto">Delete</button>
+                            <a href="#" data-bs-dismiss="modal" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium w-full sm:w-auto cursor-pointer">Cancel</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

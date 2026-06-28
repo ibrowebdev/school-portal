@@ -1,418 +1,210 @@
 @extends('layouts.master')
 @section('content')
-    <div class="page-wrapper">
-        <div class="content container-fluid">
-            <div class="page-header">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h3 class="page-title">Invoices</h3>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Invoices</li>
-                        </ul>
-                    </div>
-                </div>
+<div class="space-y-6">
+    <x-page-header title="Invoices" parent="Dashboard" :parentRoute="route('home')" />
+
+    <div class="flex justify-end gap-2 mb-4">
+        <a href="{{ route('invoices.index') }}" class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-blue-600 text-white shadow-sm">
+            <i class="fa fa-list"></i>
+        </a>
+        <a href="{{ route('invoices.grid') }}" class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-white text-gray-400 hover:text-gray-600 border border-gray-200">
+            <i class="fa fa-th"></i>
+        </a>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- User Filter -->
+            <div class="relative group">
+                <button class="w-full px-4 py-2.5 text-left border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex justify-between items-center text-sm font-medium text-gray-700">
+                    <span class="flex items-center gap-2"><i class="fas fa-user-plus text-gray-400"></i> Select User</span>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                </button>
             </div>
 
-            <div class="page-header">
-                <div class="row align-items-center">
-                    <div class="col"></div>
-                    <div class="col-auto">
-                        <a href="{{ route('invoices.index') }}" class="invoices-links active">
-                            <i class="fa fa-list" aria-hidden="true"></i>
-                        </a>
-                        <a href="{{ route('invoices.grid') }}" class="invoices-links">
-                            <i class="fa fa-th" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                </div>
+            <!-- Date Filter -->
+            <div class="relative group">
+                <button class="w-full px-4 py-2.5 text-left border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex justify-between items-center text-sm font-medium text-gray-700">
+                    <span class="flex items-center gap-2"><i class="fas fa-calendar text-gray-400"></i> Select Date</span>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                </button>
             </div>
 
-            <div class="card report-card">
-                <div class="card-body pb-0">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="app-listing">
-                                <li>
-                                    <div class="multipleSelection">
-                                        <div class="selectBox">
-                                            <p class="mb-0"><i class="fas fa-user-plus me-1 select-icon"></i> Select
-                                                User</p>
-                                            <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
-                                        </div>
-                                        <div id="checkBoxes">
-                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form action="#" class="x-submit" data-then="reload">
-                                                <p class="checkbox-title">Customer Search</p>
-                                                <div class="form-custom">
-                                                    <input type="text" class="form-control bg-grey"
-                                                        placeholder="Enter Customer Name">
-                                                </div>
-                                                <div class="selectBox-cont">
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> Brian Johnson
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> Russell Copeland
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> Greg Lynch
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> John Blair
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> Barbara Moore
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> Hendry Evan
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="username">
-                                                        <span class="checkmark"></span> Richard Miles
-                                                    </label>
-                                                </div>
-                                                <button type="submit" class="btn w-100 btn-primary">Apply</button>
-                                                <button type="reset" class="btn w-100 btn-grey">Reset</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="multipleSelection">
-                                        <div class="selectBox">
-                                            <p class="mb-0"><i class="fas fa-calendar me-1 select-icon"></i> Select
-                                                Date</p>
-                                            <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
-                                        </div>
-                                        <div id="checkBoxes">
-                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form action="#" class="x-submit" data-then="reload">
-                                                <p class="checkbox-title">Date Filter</p>
-                                                <div class="selectBox-cont selectBox-cont-one h-auto">
-                                                    <div class="date-picker">
-                                                        <div class="form-custom cal-icon">
-                                                            <input class="form-control datetimepicker" type="text"
-                                                                placeholder="Form">
-                                                        </div>
-                                                    </div>
-                                                    <div class="date-picker pe-0">
-                                                        <div class="form-custom cal-icon">
-                                                            <input class="form-control datetimepicker" type="text"
-                                                                placeholder="To">
-                                                        </div>
-                                                    </div>
-                                                    <div class="date-list">
-                                                        <ul>
-                                                            <li><a href="#" class="btn date-btn">Today</a></li>
-                                                            <li><a href="#" class="btn date-btn">Yesterday</a></li>
-                                                            <li><a href="#" class="btn date-btn">Last 7 days</a>
-                                                            </li>
-                                                            <li><a href="#" class="btn date-btn">This month</a></li>
-                                                            <li><a href="#" class="btn date-btn">Last month</a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="multipleSelection">
-                                        <div class="selectBox">
-                                            <p class="mb-0"><i class="fas fa-book-open me-1 select-icon"></i> Select
-                                                Status</p>
-                                            <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
-                                        </div>
-                                        <div id="checkBoxes">
-                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form action="#" class="x-submit" data-then="reload">
-                                                <p class="checkbox-title">By Status</p>
-                                                <div class="selectBox-cont">
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="name" checked>
-                                                        <span class="checkmark"></span> All Invoices
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="name">
-                                                        <span class="checkmark"></span> Paid
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="name">
-                                                        <span class="checkmark"></span> Overdue
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="name">
-                                                        <span class="checkmark"></span> Draft
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="name">
-                                                        <span class="checkmark"></span> Recurring
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="name">
-                                                        <span class="checkmark"></span> Cancelled
-                                                    </label>
-                                                </div>
-                                                <button type="submit" class="btn w-100 btn-primary">Apply</button>
-                                                <button type="reset" class="btn w-100 btn-grey">Reset</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="multipleSelection">
-                                        <div class="selectBox">
-                                            <p class="mb-0"><i class="fas fa-bookmark me-1 select-icon"></i> By
-                                                Category</p>
-                                            <span class="down-icon"><i class="fas fa-chevron-down"></i></span>
-                                        </div>
-                                        <div id="checkBoxes">
-                                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form action="#" class="x-submit" data-then="reload">
-                                                <p class="checkbox-title">Category</p>
-                                                <div class="form-custom">
-                                                    <input type="text" class="form-control bg-grey"
-                                                        placeholder="Enter Category Name">
-                                                </div>
-                                                <div class="selectBox-cont">
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Advertising
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Food
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Marketing
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Repairs
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Software
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Stationary
-                                                    </label>
-                                                    <label class="custom_check w-100">
-                                                        <input type="checkbox" name="category">
-                                                        <span class="checkmark"></span> Travel
-                                                    </label>
-                                                </div>
-                                                <button type="submit" class="btn w-100 btn-primary">Apply</button>
-                                                <button type="reset" class="btn w-100 btn-grey">Reset</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="report-btn">
-                                        <a href="#" class="btn">
-                                            <img src="assets/img/icons/invoices-icon5.png" alt="" class="me-2">
-                                            Generate report
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <!-- Status Filter -->
+            <div class="relative group">
+                <button class="w-full px-4 py-2.5 text-left border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex justify-between items-center text-sm font-medium text-gray-700">
+                    <span class="flex items-center gap-2"><i class="fas fa-book-open text-gray-400"></i> Select Status</span>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                </button>
             </div>
 
-            <div class="card invoices-tabs-card border-0">
-                <div class="card-body card-body pt-0 pb-0">
-                    <div class="invoices-main-tabs">
-                        <div class="row align-items-center">
-                            <div class="col-lg-8 col-md-8">
-                                <div class="invoices-tabs">
-                                    <ul>
-                                        <li><a class="active" href="{{ route('invoices.index') }}">All Invoice</a></li>
-                                        <li><a href="{{ route('invoice/paid/page') }}">Paid</a></li>
-                                        <li><a href="{{ route('invoice/overdue/page') }}">Overdue</a></li>
-                                        <li><a href="{{ route('invoice/draft/page') }}">Draft</a></li>
-                                        <li><a href="{{ route('invoice/recurring/page') }}">Recurring</a></li>
-                                        <li><a href="{{ route('invoice/cancelled/page') }}">Cancelled</a></li>
-                                    </ul>
-                                </div> 
-                            </div>
-                            <div class="col-lg-4 col-md-4">
-                                <div class="invoices-settings-btn">
-                                    <a href="invoices-settings.html" class="invoices-settings-icon">
-                                        <i class="feather feather-settings"></i>
-                                    </a>
-                                    <a href="{{ route('invoices.create') }}" class="btn">
-                                        <i class="feather feather-plus-circle"></i> New Invoice
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Category Filter -->
+            <div class="relative group">
+                <button class="w-full px-4 py-2.5 text-left border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white flex justify-between items-center text-sm font-medium text-gray-700">
+                    <span class="flex items-center gap-2"><i class="fas fa-bookmark text-gray-400"></i> By Category</span>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                </button>
             </div>
 
-            <div class="row">
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card inovices-card">
-                        <div class="card-body">
-                            <div class="inovices-widget-header">
-                                <span class="inovices-widget-icon">
-                                    <img src="{{ URL::to('assets/img/icons/invoices-icon1.svg') }}" alt="">
-                                </span>
-                                <div class="inovices-dash-count">
-                                    <div class="inovices-amount">$8,78,797</div>
-                                </div>
-                            </div>
-                            <p class="inovices-all">All Invoices <span>50</span></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card inovices-card">
-                        <div class="card-body">
-                            <div class="inovices-widget-header">
-                                <span class="inovices-widget-icon">
-                                    <img src="{{ URL::to('assets/img/icons/invoices-icon2.svg') }}" alt="">
-                                </span>
-                                <div class="inovices-dash-count">
-                                    <div class="inovices-amount">$4,5884</div>
-                                </div>
-                            </div>
-                            <p class="inovices-all">Paid Invoices <span>60</span></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card inovices-card">
-                        <div class="card-body">
-                            <div class="inovices-widget-header">
-                                <span class="inovices-widget-icon">
-                                    <img src="{{ URL::to('assets/img/icons/invoices-icon3.svg') }}" alt="">
-                                </span>
-                                <div class="inovices-dash-count">
-                                    <div class="inovices-amount">$2,05,545</div>
-                                </div>
-                            </div>
-                            <p class="inovices-all">Unpaid Invoices <span>70</span></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card inovices-card">
-                        <div class="card-body">
-                            <div class="inovices-widget-header">
-                                <span class="inovices-widget-icon">
-                                    <img src="{{ URL::to('assets/img/icons/invoices-icon4.svg') }}" alt="">
-                                </span>
-                                <div class="inovices-dash-count">
-                                    <div class="inovices-amount">$8,8,797</div>
-                                </div>
-                            </div>
-                            <p class="inovices-all">Cancelled Invoices <span>80</span></p>
-                        </div>
-                    </div>
-                </div>
+            <!-- Generate Report Button -->
+            <div>
+                <a href="#" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition flex items-center justify-center gap-2 text-sm font-medium">
+                    <img src="{{ URL::to('assets/img/icons/invoices-icon5.png') }}" alt="" class="w-4 h-4">
+                    Generate report
+                </a>
             </div>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="card card-table">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-stripped table-hover datatable">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th>Invoice ID</th>
-                                            <th>Category</th>
-                                            <th>Created on</th>
-                                            <th>Invoice to</th>
-                                            <th>Amount</th>
-                                            <th>Due date</th>
-                                            <th>Status</th>
-                                            <th class="text-end">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($invoiceList as $key => $value)
-                                        <tr>
-                                            <td>
-                                                <label class="custom_check">
-                                                    <input type="checkbox" name="invoice">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                                <a href="{{ url('invoice/edit/'.$value->invoice_id) }}" class="invoice-link">{{ $value->invoice_id }}</a>
-                                            </td>
-                                            <td>{{ $value->category }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($value->created_at)->format('d M Y') }}</td>
-                                            <td>
-                                                <h2 class="table-avatar">
-                                                    <a href="profile.html">
-                                                        <img class="avatar avatar-sm me-2 avatar-img rounded-circle" src="{{ URL::to('/images/photo_defaults.jpg') }}" alt=""> {{ $value->customer_name }}
-                                                    </a>
-                                                </h2>
-                                            </td>
-                                            <td class="text-primary">$ {{ $value->total_amount }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($value->due_date)->format('d M Y') }}</td>
-                                            <td><span class="badge bg-success-light">Paid</span></td>
-                                            <td class="text-end">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="fas fa-ellipsis-v"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <a class="dropdown-item" href="edit-invoice.html">
-                                                            <i class="far fa-edit me-2"></i>Edit
-                                                        </a>
-                                                        <a class="dropdown-item" href="{{ url('invoice/view/'.$value->invoice_id) }}">
-                                                            <i class="far fa-eye me-2"></i>View Detail
-                                                        </a>
-                                                        <a class="dropdown-item" href="javascript:void(0);">
-                                                            <i class="far fa-trash-alt me-2"></i>Delete
-                                                        </a>
-                                                        <a class="dropdown-item" href="javascript:void(0);">
-                                                            <i class="far fa-check-circle me-2"></i>Mark as sent
-                                                        </a>
-                                                        <a class="dropdown-item" href="javascript:void(0);">
-                                                            <i class="far fa-paper-plane me-2"></i>Send Invoice
-                                                        </a>
-                                                        <a class="dropdown-item" href="#">
-                                                            <i class="far fa-copy me-2"></i>Clone Invoice
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="overflow-x-auto w-full md:w-auto pb-2 md:pb-0 hide-scrollbar">
+                <ul class="flex items-center space-x-1 px-2 min-w-max">
+                    <li><a href="{{ route('invoices.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium whitespace-nowrap">All Invoice</a></li>
+                    <li><a href="{{ route('invoice/paid/page') }}" class="px-4 py-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">Paid</a></li>
+                    <li><a href="{{ route('invoice/overdue/page') }}" class="px-4 py-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">Overdue</a></li>
+                    <li><a href="{{ route('invoice/draft/page') }}" class="px-4 py-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">Draft</a></li>
+                    <li><a href="{{ route('invoice/recurring/page') }}" class="px-4 py-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">Recurring</a></li>
+                    <li><a href="{{ route('invoice/cancelled/page') }}" class="px-4 py-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">Cancelled</a></li>
+                </ul>
+            </div>
+            
+            <div class="flex items-center gap-2 px-2 w-full md:w-auto justify-end">
+                <a href="#" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors border border-gray-200">
+                    <i class="feather feather-settings"></i>
+                </a>
+                <a href="{{ route('invoices.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 text-sm font-medium shadow-sm whitespace-nowrap">
+                    <i class="feather feather-plus-circle"></i> New Invoice
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <img src="{{ URL::to('assets/img/icons/invoices-icon1.svg') }}" alt="" class="w-6 h-6">
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">$8,78,797</h3>
+            </div>
+            <p class="text-sm text-gray-500 font-medium flex justify-between items-center">
+                All Invoices <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">50</span>
+            </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-lg bg-emerald-50 flex items-center justify-center">
+                    <img src="{{ URL::to('assets/img/icons/invoices-icon2.svg') }}" alt="" class="w-6 h-6">
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">$4,5884</h3>
+            </div>
+            <p class="text-sm text-gray-500 font-medium flex justify-between items-center">
+                Paid Invoices <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">60</span>
+            </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
+                    <img src="{{ URL::to('assets/img/icons/invoices-icon3.svg') }}" alt="" class="w-6 h-6">
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">$2,05,545</h3>
+            </div>
+            <p class="text-sm text-gray-500 font-medium flex justify-between items-center">
+                Unpaid Invoices <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">70</span>
+            </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-4">
+                <div class="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center">
+                    <img src="{{ URL::to('assets/img/icons/invoices-icon4.svg') }}" alt="" class="w-6 h-6">
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">$8,8,797</h3>
+            </div>
+            <p class="text-sm text-gray-500 font-medium flex justify-between items-center">
+                Cancelled Invoices <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">80</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Data Table Card -->
+    <x-card noPadding="true">
+        <div class="overflow-x-auto p-4">
+            <table class="w-full text-sm text-left datatable">
+                <thead class="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
+                    <tr>
+                        <th class="px-4 py-4">Invoice ID</th>
+                        <th class="px-4 py-4">Category</th>
+                        <th class="px-4 py-4">Created on</th>
+                        <th class="px-4 py-4">Invoice to</th>
+                        <th class="px-4 py-4">Amount</th>
+                        <th class="px-4 py-4">Due date</th>
+                        <th class="px-4 py-4">Status</th>
+                        <th class="px-4 py-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($invoiceList as $key => $value)
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <label class="inline-flex items-center gap-2">
+                                    <input type="checkbox" name="invoice" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <a href="{{ url('invoice/edit/'.$value->invoice_id) }}" class="text-blue-600 hover:text-blue-800 font-medium">{{ $value->invoice_id }}</a>
+                                </label>
+                            </td>
+                            <td class="px-4 py-4 text-gray-600">{{ $value->category }}</td>
+                            <td class="px-4 py-4 text-gray-600 whitespace-nowrap">{{ \Carbon\Carbon::parse($value->created_at)->format('d M Y') }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap">
+                                <a href="profile.html" class="flex items-center gap-3">
+                                    <img class="w-8 h-8 rounded-full object-cover" src="{{ URL::to('/images/photo_defaults.jpg') }}" alt=""> 
+                                    <span class="font-medium text-gray-800">{{ $value->customer_name }}</span>
+                                </a>
+                            </td>
+                            <td class="px-4 py-4 text-blue-600 font-bold whitespace-nowrap">$ {{ $value->total_amount }}</td>
+                            <td class="px-4 py-4 text-gray-600 whitespace-nowrap">{{ \Carbon\Carbon::parse($value->due_date)->format('d M Y') }}</td>
+                            <td class="px-4 py-4">
+                                <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">Paid</span>
+                            </td>
+                            <td class="px-4 py-4 text-right whitespace-nowrap relative">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="w-8 h-8 rounded text-gray-500 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-lg py-2">
+                                        <a class="dropdown-item px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 flex items-center gap-2" href="edit-invoice.html">
+                                            <i class="far fa-edit w-4"></i> Edit
+                                        </a>
+                                        <a class="dropdown-item px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 flex items-center gap-2" href="{{ url('invoice/view/'.$value->invoice_id) }}">
+                                            <i class="far fa-eye w-4"></i> View Detail
+                                        </a>
+                                        <a class="dropdown-item px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 flex items-center gap-2" href="javascript:void(0);">
+                                            <i class="far fa-trash-alt w-4"></i> Delete
+                                        </a>
+                                        <a class="dropdown-item px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 flex items-center gap-2" href="javascript:void(0);">
+                                            <i class="far fa-check-circle w-4"></i> Mark as sent
+                                        </a>
+                                        <a class="dropdown-item px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 flex items-center gap-2" href="javascript:void(0);">
+                                            <i class="far fa-paper-plane w-4"></i> Send Invoice
+                                        </a>
+                                        <a class="dropdown-item px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 flex items-center gap-2" href="#">
+                                            <i class="far fa-copy w-4"></i> Clone Invoice
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </x-card>
+</div>
 @section('script')
 @endsection
 @endsection

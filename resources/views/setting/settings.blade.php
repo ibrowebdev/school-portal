@@ -1,194 +1,175 @@
 @extends('layouts.master')
 @section('content')
-    <div class="page-wrapper">
-        <div class="content container-fluid">
-            <div class="page-header">
-                <div class="row">
-                    <div class="col">
-                        <h3 class="page-title">Settings</h3>
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('setting/page') }}">Settings</a></li>
-                            <li class="breadcrumb-item active">General Settings</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+<div class="space-y-6">
+    <!-- Page Header -->
+    <x-page-header title="Settings" :breadcrumbs="[
+        ['label' => 'Settings', 'url' => route('setting/page')],
+        ['label' => 'General Settings', 'url' => '#']
+    ]" />
 
-            <div class="settings-menu-links">
-                <ul class="nav nav-tabs menu-tabs">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="settings.html">General Settings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="localization-details.html">Localization</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="payment-settings.html">Payment Settings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="email-settings.html">Email Settings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="social-settings.html">Social Media Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="social-links.html">Social Links</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="seo-settings.html">SEO Settings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="others-settings.html">Others</a>
-                    </li>
-                </ul>
-            </div>
+    <!-- Settings Navigation -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <ul class="flex whitespace-nowrap px-4 border-b border-gray-100">
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600" href="settings.html">General Settings</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="localization-details.html">Localization</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="payment-settings.html">Payment Settings</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="email-settings.html">Email Settings</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="social-settings.html">Social Media Login</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="social-links.html">Social Links</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="seo-settings.html">SEO Settings</a>
+            </li>
+            <li>
+                <a class="block px-4 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition" href="others-settings.html">Others</a>
+            </li>
+        </ul>
+    </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">Website Basic Details</h5>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Website Basic Details -->
+        <div>
+            <x-card title="Website Basic Details">
+                <div id="form-errors-container" class="hidden mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+                    <ul id="form-errors-list" class="list-disc list-inside text-sm"></ul>
+                </div>
+                <form class="x-submit space-y-6" data-then="reload">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Website Name <span class="text-red-500">*</span></label>
+                        <input type="text" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter Website Name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Logo <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-4">
+                            <label for="file_logo" class="cursor-pointer w-12 h-12 flex items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition text-gray-500">
+                                <i class="fas fa-upload"></i>
+                            </label>
+                            <input type="file" accept="image/*" name="image" id="file_logo" onchange="loadFile(event)" class="hidden">
+                            <div class="text-xs text-gray-500">
+                                <p>Recommended image size is <span class="font-medium text-gray-700">150px x 150px</span></p>
+                            </div>
                         </div>
-                        <div class="card-body pt-0">
-                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form class="x-submit" data-then="reload">
-                                <div class="settings-form">
-                                    <div class="form-group">
-                                        <label>Website Name <span class="star-red">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter Website Name">
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="settings-label">Logo <span class="star-red">*</span></p>
-                                        <div class="settings-btn">
-                                            <input type="file" accept="image/*" name="image" id="file"
-                                                onchange="loadFile(event)" class="hide-input">
-                                            <label for="file" class="upload">
-                                                <i class="feather-upload"></i>
-                                            </label>
-                                        </div>
-                                        <h6 class="settings-size">Recommended image size is <span>150px x
-                                                150px</span></h6>
-                                        <div class="upload-images">
-                                            <img src="{{ URL::to('assets/img/logo.png') }}" alt="Image">
-                                            <a href="javascript:void(0);" class="btn-icon logo-hide-btn">
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <p class="settings-label">Favicon <span class="star-red">*</span></p>
-                                        <div class="settings-btn">
-                                            <input type="file" accept="image/*" name="image" id="file"
-                                                onchange="loadFile(event)" class="hide-input">
-                                            <label for="file" class="upload">
-                                                <i class="feather-upload"></i>
-                                            </label>
-                                        </div>
-                                        <h6 class="settings-size">
-                                            Recommended image size is <span>16px x 16px or 32px x 32px</span>
-                                        </h6>
-                                        <h6 class="settings-size mt-1">Accepted formats: only png and ico</h6>
-                                        <div class="upload-images upload-size">
-                                            <img src="{{ URL::to('assets/img/favicon.png') }}" alt="Image">
-                                            <a href="javascript:void(0);" class="btn-icon logo-hide-btn">
-                                                <i class="fa fa-times-circle"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-5 col-md-6">
-                                            <div class="form-group">
-                                                <div
-                                                    class="status-toggle d-flex justify-content-between align-items-center">
-                                                    <p class="mb-0">RTL</p>
-                                                    <input type="checkbox" id="status_1" class="check">
-                                                    <label for="status_1" class="checktoggle">checkbox</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-0">
-                                        <div class="settings-btns">
-                                            <button type="submit" class="btn btn-orange">Update</button>
-                                            <button type="submit" class="btn btn-grey">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="mt-4 relative inline-block">
+                            <img src="{{ URL::to('assets/img/logo.png') }}" alt="Logo" class="max-w-[150px] border border-gray-200 rounded-lg p-2 bg-gray-50">
+                            <a href="javascript:void(0);" class="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition">
+                                <i class="fas fa-times text-xs"></i>
+                            </a>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">Address Details</h5>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Favicon <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-4">
+                            <label for="file_favicon" class="cursor-pointer w-12 h-12 flex items-center justify-center bg-gray-50 border border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition text-gray-500">
+                                <i class="fas fa-upload"></i>
+                            </label>
+                            <input type="file" accept="image/*" name="image" id="file_favicon" onchange="loadFile(event)" class="hidden">
+                            <div class="text-xs text-gray-500">
+                                <p>Recommended image size is <span class="font-medium text-gray-700">16px x 16px or 32px x 32px</span></p>
+                                <p class="mt-1">Accepted formats: only png and ico</p>
+                            </div>
                         </div>
-                        <div class="card-body pt-0">
-                            <div id="form-errors-container" class="d-none alert alert-danger" style="display: none;">
-                <ul id="form-errors-list" class="mb-0"></ul>
-            </div>
-            <form class="x-submit" data-then="reload">
-                                <div class="settings-form">
-                                    <div class="form-group">
-                                        <label>Address Line 1 <span class="star-red">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter Address Line 1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Address Line 2 <span class="star-red">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter Address Line 2">
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>City <span class="star-red">*</span></label>
-                                                <input type="text" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>State/Province <span class="star-red">*</span></label>
-                                                <select class="select form-control">
-                                                    <option selected="selected">Select</option>
-                                                    <option>California</option>
-                                                    <option>Tasmania</option>
-                                                    <option>Auckland</option>
-                                                    <option>Marlborough</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Zip/Postal Code <span class="star-red">*</span></label>
-                                                <input type="text" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Country <span class="star-red">*</span></label>
-                                                <select class="select form-control">
-                                                    <option selected="selected">Select</option>
-                                                    <option>India</option>
-                                                    <option>London</option>
-                                                    <option>France</option>
-                                                    <option>USA</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-0">
-                                        <div class="settings-btns">
-                                            <button type="submit" class="btn btn-orange">Update</button>
-                                            <button type="submit" class="btn btn-grey">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="mt-4 relative inline-block">
+                            <img src="{{ URL::to('assets/img/favicon.png') }}" alt="Favicon" class="max-w-[32px] border border-gray-200 rounded p-1 bg-gray-50">
+                            <a href="javascript:void(0);" class="absolute -top-2 -right-2 w-5 h-5 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition">
+                                <i class="fas fa-times text-[10px]"></i>
+                            </a>
                         </div>
                     </div>
+
+                    <div>
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50">
+                            <span class="text-sm font-medium text-gray-700">RTL</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="status_1" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm">Cancel</button>
+                        <button type="submit" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium text-sm shadow-sm">Update</button>
+                    </div>
+
+                </form>
+            </x-card>
+        </div>
+
+        <!-- Address Details -->
+        <div>
+            <x-card title="Address Details">
+                <div id="form-errors-container-address" class="hidden mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+                    <ul id="form-errors-list-address" class="list-disc list-inside text-sm"></ul>
                 </div>
-            </div>
+                <form class="x-submit space-y-6" data-then="reload">
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1 <span class="text-red-500">*</span></label>
+                        <input type="text" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter Address Line 1">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2 <span class="text-red-500">*</span></label>
+                        <input type="text" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Enter Address Line 2">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">City <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">State/Province <span class="text-red-500">*</span></label>
+                            <select class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm select">
+                                <option selected="selected">Select</option>
+                                <option>California</option>
+                                <option>Tasmania</option>
+                                <option>Auckland</option>
+                                <option>Marlborough</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Zip/Postal Code <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country <span class="text-red-500">*</span></label>
+                            <select class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm select">
+                                <option selected="selected">Select</option>
+                                <option>India</option>
+                                <option>London</option>
+                                <option>France</option>
+                                <option>USA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
+                        <button type="button" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm">Cancel</button>
+                        <button type="submit" class="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium text-sm shadow-sm">Update</button>
+                    </div>
+
+                </form>
+            </x-card>
         </div>
     </div>
+</div>
 @endsection
