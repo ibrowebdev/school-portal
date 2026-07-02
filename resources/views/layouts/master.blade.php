@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ URL::to('assets/plugins/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ URL::to('assets/plugins/select2/css/select2.min.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
     <div class="min-h-screen flex flex-col">
@@ -115,5 +116,6 @@
         });
     </script>
     @yield('script')
+    @livewireScripts
 </body>
 </html>

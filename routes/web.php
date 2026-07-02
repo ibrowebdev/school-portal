@@ -10,7 +10,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,9 +54,9 @@ Route::middleware('auth')->group(function () {
     Route::get('setting/page', [SettingController::class, 'index'])->name('setting/page');
 
     // 2. USER MANAGEMENT
-    Route::post('change/password', [UserManagementController::class, 'changePassword'])->name('change/password');
-    Route::get('get-users-data', [UserManagementController::class, 'getUsersData'])->name('get-users-data');
-    Route::resource('users', UserManagementController::class)->parameters(['users' => 'id']);
+    Route::post('change/password', [UserController::class, 'changePassword'])->name('change/password');
+    Route::get('get-users-data', [UserController::class, 'getUsersData'])->name('get-users-data');
+    Route::resource('users', UserController::class);
 
     // 3. STUDENTS
     Route::get('student/grid', [StudentController::class, 'studentGrid'])->name('students.grid');

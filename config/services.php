@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'cloudinary' => [
+        'url' => env('CLOUDINARY_URL'),
+        'base_folder' => env('CLOUDINARY_BASE_FOLDER', 'school-portal')
+    ]
 
 ];

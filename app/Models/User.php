@@ -2,15 +2,21 @@
 
 namespace App\Models;
 
+use App\Observers\UserObserver;
+use App\Traits\HasMediaTrait;
+use App\Traits\InteractWithUserAttributes;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
+#[ObservedBy([UserObserver::class])]
 class User extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, Notifiable, HasMediaTrait, InteractWithUserAttributes, SoftDeletes;
 
     const STUDENT = 'student';
     const TEACHER = 'teacher';
@@ -46,19 +52,6 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Auto-generate a prefixed user_id on creation.
-     */
-    protected static function booted(): void
-    {
-        static::creating(function (User $model) {
-            if (empty($model->user_id)) {
-                $latest = static::orderByDesc('user_id')->value('user_id');
-                $nextID = $latest ? intval(substr($latest, 3)) + 1 : 1;
-                $model->user_id = '000' . sprintf('%03d', $nextID);
-            }
-        });
-    }
 
     // ─── Type Helpers ───────────────────────────────────────
 
@@ -87,15 +80,4 @@ class User extends Authenticatable
         return $this->type === self::SUPER_ADMIN;
     }
 
-    // ─── Relationships ──────────────────────────────────────
-
-    public function studentProfile(): HasOne
-    {
-        return $this->hasOne(Student::class, 'user_id', 'id');
-    }
-
-    public function teacherProfile(): HasOne
-    {
-        return $this->hasOne(Teacher::class, 'user_id', 'id');
-    }
 }
