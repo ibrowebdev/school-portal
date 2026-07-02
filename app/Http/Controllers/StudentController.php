@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
+use App\Models\ClassSection;
+use App\Models\SchoolClass;
+use App\Models\StudentProfile;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
@@ -12,7 +19,10 @@ class StudentController extends Controller
     /** index page student list */
     public function index()
     {
-        $studentList = Student::all();
+        $studentList = User::students()
+            ->with('studentProfile.schoolClass', 'studentProfile.classSection')
+            ->orderByDesc('id')
+            ->get();
 
         return view('student.student', compact('studentList'));
     }
@@ -20,7 +30,10 @@ class StudentController extends Controller
     /** index page student grid */
     public function studentGrid()
     {
-        $studentList = Student::all();
+        $studentList = User::students()
+            ->with('studentProfile.schoolClass')
+            ->orderByDesc('id')
+            ->get();
 
         return view('student.student-grid', compact('studentList'));
     }
@@ -28,38 +41,65 @@ class StudentController extends Controller
     /** student add page */
     public function create()
     {
-        return view('student.add-student');
+        $classes = SchoolClass::with('sections')->orderBy('name')->get();
+        $parents = User::parents()->orderBy('first_name')->get();
+
+        return view('student.add-student', compact('classes', 'parents'));
     }
 
     /** Save Record */
-    public function store(Request $request): JsonResponse
+    public function store(StoreStudentRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'first_name'    => ['required', 'string', 'max:255'],
-            'last_name'     => ['required', 'string', 'max:255'],
-            'gender'        => ['required', 'not_in:0'],
-            'date_of_birth' => ['required', 'date'],
-            'roll'          => ['required', 'string', 'max:50'],
-            'blood_group'   => ['required', 'string', 'max:10'],
-            'religion'      => ['required', 'string', 'max:50'],
-            'email'         => ['required', 'email', 'unique:students,email'],
-            'class'         => ['required', 'string', 'max:50'],
-            'section'       => ['required', 'string', 'max:50'],
-            'admission_id'  => ['required', 'string', 'unique:students,admission_id'],
-            'phone_number'  => ['required', 'numeric', 'digits_between:8,15'],
-            'upload'        => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-        ]);
+        $validated = $request->validated();
 
+        DB::beginTransaction();
         try {
-            $filename = time() . '_' . $request->file('upload')->getClientOriginalName();
-            $request->file('upload')->move(public_path('student-photos'), $filename);
+            // Handle avatar upload
+            $avatarPath = 'photo_defaults.jpg';
+            if ($request->hasFile('avatar')) {
+                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $request->file('avatar')->move(public_path('student-photos'), $filename);
+                $avatarPath = 'student-photos/' . $filename;
+            }
 
-            Student::create(array_merge($validated, [
-                'upload' => 'student-photos/' . $filename,
-            ]));
+            // Create the user record
+            $user = User::create([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'gender' => $validated['gender'],
+                'date_of_birth' => $validated['date_of_birth'],
+                'phone_number' => $validated['phone_number'] ?? null,
+                'type' => User::STUDENT,
+                'status' => 'active',
+                'avatar' => $avatarPath,
+                'join_date' => now()->toDateString(),
+                'password' => Hash::make('password'), // default password
+            ]);
 
-            return response()->json(['message' => 'Student has been added successfully!', 'redirect' => route('students.index')]);
+            $user->assignRole(User::STUDENT);
+
+            // Create the student profile
+            StudentProfile::create([
+                'user_id' => $user->id,
+                'admission_id' => $validated['admission_id'],
+                'roll_number' => $validated['roll_number'] ?? null,
+                'school_class_id' => $validated['school_class_id'],
+                'class_section_id' => $validated['class_section_id'] ?? null,
+                'blood_group' => $validated['blood_group'] ?? null,
+                'religion' => $validated['religion'] ?? null,
+                'address' => $validated['address'] ?? null,
+                'parent_id' => $validated['parent_id'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Student has been added successfully!',
+                'redirect' => route('students.index'),
+            ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Student Save Failed', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to add student.'], 500);
@@ -67,76 +107,108 @@ class StudentController extends Controller
     }
 
     /** View */
-    public function edit(Student $student)
+    public function edit($id)
     {
-        $studentEdit = $student;
-        return view('student.edit-student', compact('studentEdit'));
+        $studentEdit = User::with('studentProfile')->findOrFail($id);
+        $classes = SchoolClass::with('sections')->orderBy('name')->get();
+        $parents = User::parents()->orderBy('first_name')->get();
+
+        return view('student.edit-student', compact('studentEdit', 'classes', 'parents'));
     }
 
     /** Update Record */
-    public function update(Request $request, Student $student): JsonResponse
+    public function update(UpdateStudentRequest $request, $id): JsonResponse
     {
-        $validated = $request->validate([
-            'first_name'    => ['required', 'string', 'max:255'],
-            'last_name'     => ['required', 'string', 'max:255'],
-            'gender'        => ['required', 'not_in:0'],
-            'date_of_birth' => ['required', 'date'],
-            'roll'          => ['required', 'string', 'max:50'],
-            'blood_group'   => ['required', 'string', 'max:10'],
-            'religion'      => ['required', 'string', 'max:50'],
-            'email'         => ['required', 'email', 'unique:students,email,' . $student->id],
-            'class'         => ['required', 'string', 'max:50'],
-            'section'       => ['required', 'string', 'max:50'],
-            'admission_id'  => ['required', 'string', 'unique:students,admission_id,' . $student->id],
-            'phone_number'  => ['required', 'numeric', 'digits_between:8,15'],
-            'upload'        => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-        ]);
+        $validated = $request->validated();
+        $student = User::findOrFail($id);
 
+        DB::beginTransaction();
         try {
-            if ($request->hasFile('upload')) {
-                // Delete old image
-                if (! empty($student->upload) && file_exists(public_path($student->upload))) {
-                    unlink(public_path($student->upload));
+            // Handle avatar upload
+            if ($request->hasFile('avatar')) {
+                if ($student->avatar !== 'photo_defaults.jpg' && ! empty($student->avatar) && file_exists(public_path($student->avatar))) {
+                    unlink(public_path($student->avatar));
                 }
-                $filename = time() . '_' . $request->file('upload')->getClientOriginalName();
-                $request->file('upload')->move(public_path('student-photos'), $filename);
-                $validated['upload'] = 'student-photos/' . $filename;
-            } else {
-                unset($validated['upload']);
+                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $request->file('avatar')->move(public_path('student-photos'), $filename);
+                $student->avatar = 'student-photos/' . $filename;
             }
 
-            $student->update($validated);
+            // Update user record
+            $student->update([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'gender' => $validated['gender'],
+                'date_of_birth' => $validated['date_of_birth'],
+                'phone_number' => $validated['phone_number'] ?? null,
+            ]);
 
-            return response()->json(['message' => 'Student updated successfully!', 'redirect' => route('students.index')]);
+            // Update or create student profile
+            $student->studentProfile()->updateOrCreate(
+                ['user_id' => $student->id],
+                [
+                    'admission_id' => $validated['admission_id'],
+                    'roll_number' => $validated['roll_number'] ?? null,
+                    'school_class_id' => $validated['school_class_id'],
+                    'class_section_id' => $validated['class_section_id'] ?? null,
+                    'blood_group' => $validated['blood_group'] ?? null,
+                    'religion' => $validated['religion'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'parent_id' => $validated['parent_id'] ?? null,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Student updated successfully!',
+                'redirect' => route('students.index'),
+            ]);
         } catch (\Exception $e) {
-            Log::error('Student Update Failed', ['error' => $e->getMessage(), 'id' => $student->id]);
+            DB::rollBack();
+            Log::error('Student Update Failed', ['error' => $e->getMessage(), 'id' => $id]);
 
             return response()->json(['message' => 'Failed to update student.'], 500);
         }
     }
 
     /** Delete Record */
-    public function destroy(Student $student): JsonResponse
+    public function destroy($id): JsonResponse
     {
+        $student = User::findOrFail($id);
+
         try {
-            if (! empty($student->upload) && file_exists(public_path($student->upload))) {
-                unlink(public_path($student->upload));
+            if (! empty($student->avatar) && $student->avatar !== 'photo_defaults.jpg' && file_exists(public_path($student->avatar))) {
+                unlink(public_path($student->avatar));
             }
 
-            $student->delete();
+            $student->delete(); // Soft delete; profile cascades
 
             return response()->json(['message' => 'Student deleted successfully!']);
         } catch (\Exception $e) {
-            Log::error('Student Deletion Failed', ['error' => $e->getMessage(), 'id' => $student->id]);
+            Log::error('Student Deletion Failed', ['error' => $e->getMessage(), 'id' => $id]);
 
             return response()->json(['message' => 'Failed to delete student.'], 500);
         }
     }
 
     /** student profile page */
-    public function show(Student $student)
+    public function show($id)
     {
-        $studentProfile = $student;
+        $studentProfile = User::with([
+            'studentProfile.schoolClass',
+            'studentProfile.classSection',
+            'studentProfile.parent',
+            'results.subject',
+        ])->findOrFail($id);
+
         return view('student.student-profile', compact('studentProfile'));
+    }
+
+    /** Get class sections via AJAX */
+    public function getClassSections(SchoolClass $schoolClass): JsonResponse
+    {
+        return response()->json($schoolClass->sections);
     }
 }

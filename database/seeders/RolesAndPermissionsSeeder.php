@@ -16,6 +16,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Create permissions
         $permissions = [
+            // Core management
             'manage-students',
             'manage-teachers',
             'manage-departments',
@@ -25,16 +26,35 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage-users',
             'view-dashboard',
             'view-reports',
+
+            // Academic management
+            'manage-academic-sessions',
+            'manage-classes',
+            'manage-class-subjects',
+            'manage-class-teachers',
+
+            // Results
+            'upload-results',
+            'view-results',
+            'manage-grade-settings',
+
+            // Parent
+            'view-children',
+
+            // Attendance
+            'manage-attendance',
+            'view-attendance',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create roles and assign permissions
+        // ─── Super Admin: ALL permissions ───────────────────────
         $superAdmin = Role::firstOrCreate(['name' => User::SUPER_ADMIN]);
         $superAdmin->syncPermissions(Permission::all());
 
+        // ─── Admin: All except user management ──────────────────
         $admin = Role::firstOrCreate(['name' => User::ADMIN]);
         $admin->syncPermissions([
             'manage-students',
@@ -46,19 +66,42 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage-users',
             'view-dashboard',
             'view-reports',
+            'manage-academic-sessions',
+            'manage-classes',
+            'manage-class-subjects',
+            'manage-class-teachers',
+            'upload-results',
+            'view-results',
+            'manage-grade-settings',
+            'manage-attendance',
+            'view-attendance',
         ]);
 
+        // ─── Teacher: View dashboard, results, attendance ───────
         $teacher = Role::firstOrCreate(['name' => User::TEACHER]);
         $teacher->syncPermissions([
             'view-dashboard',
             'view-reports',
+            'view-results',
+            'manage-attendance',
+            'view-attendance',
         ]);
 
+        // ─── Student: View dashboard and own results ────────────
         $student = Role::firstOrCreate(['name' => User::STUDENT]);
         $student->syncPermissions([
             'view-dashboard',
+            'view-results',
+            'view-attendance',
         ]);
 
-        Role::firstOrCreate(['name' => User::PARENT]);
+        // ─── Parent: View dashboard, children, and results ──────
+        $parent = Role::firstOrCreate(['name' => User::PARENT]);
+        $parent->syncPermissions([
+            'view-dashboard',
+            'view-children',
+            'view-results',
+            'view-attendance',
+        ]);
     }
 }

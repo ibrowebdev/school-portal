@@ -7,13 +7,24 @@
                 </li>
 
                 <!-- Dashboard -->
-                <li class="submenu group {{ request()->routeIs('home', 'teacher/dashboard', 'student/dashboard') ? 'active' : '' }}">
-                    <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('home', 'teacher/dashboard', 'student/dashboard') ? 'text-blue-600 bg-blue-50' : '' }}">
+                <li class="submenu group {{ request()->routeIs('home', 'teacher/dashboard', 'student/dashboard', 'parent.dashboard') ? 'active' : '' }}">
+                    <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('home', 'teacher/dashboard', 'student/dashboard', 'parent.dashboard') ? 'text-blue-600 bg-blue-50' : '' }}">
                         <div class="flex items-center gap-3"><i class="feather-grid text-lg w-5 text-center"></i> <span>Dashboard</span></div>
                         <span class="menu-arrow fas fa-chevron-right text-xs transition-transform duration-200 group-[.active]:rotate-90"></span>
                     </a>
                     <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
+                        @hasrole('Super Admin|Admin')
                         <li><a href="{{ route('home') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('home') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Admin Dashboard</a></li>
+                        @endhasrole
+                        @if(auth()->user()->isTeacher())
+                        <li><a href="{{ route('teacher/dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('teacher/dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Teacher Dashboard</a></li>
+                        @endif
+                        @if(auth()->user()->isStudent())
+                        <li><a href="{{ route('student/dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('student/dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Student Dashboard</a></li>
+                        @endif
+                        @if(auth()->user()->isParent())
+                        <li><a href="{{ route('parent.dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('parent.dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Parent Dashboard</a></li>
+                        @endif
                     </ul>
                 </li>
 
@@ -62,6 +73,47 @@
                     <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
                         <li><a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('subjects.index') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Subject List</a></li>
                         <li><a href="{{ route('subjects.create') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('subjects.create') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Subject Add</a></li>
+                    </ul>
+                </li>
+
+                <!-- Academic -->
+                <li class="submenu group {{ request()->routeIs('academic-sessions.*', 'terms.*', 'school-classes.*') ? 'active' : '' }}">
+                    <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('academic-sessions.*', 'terms.*', 'school-classes.*') ? 'text-blue-600 bg-blue-50' : '' }}">
+                        <div class="flex items-center gap-3"><i class="fas fa-calendar-alt text-lg w-5 text-center"></i> <span>Academic</span></div>
+                        <span class="menu-arrow fas fa-chevron-right text-xs transition-transform duration-200 group-[.active]:rotate-90"></span>
+                    </a>
+                    <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
+                        <li><a href="{{ route('academic-sessions.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('academic-sessions.*', 'terms.*') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Sessions & Terms</a></li>
+                        <li><a href="{{ route('school-classes.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('school-classes.*') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Classes</a></li>
+                    </ul>
+                </li>
+
+                <!-- Results & Examinations -->
+                <li class="submenu group {{ request()->routeIs('results.*', 'grade-settings.*') ? 'active' : '' }}">
+                    <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('results.*', 'grade-settings.*') ? 'text-blue-600 bg-blue-50' : '' }}">
+                        <div class="flex items-center gap-3"><i class="fas fa-clipboard-list text-lg w-5 text-center"></i> <span>Results</span></div>
+                        <span class="menu-arrow fas fa-chevron-right text-xs transition-transform duration-200 group-[.active]:rotate-90"></span>
+                    </a>
+                    <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
+                        <li><a href="{{ route('results.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('results.index') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">View Results</a></li>
+                        @can('upload-results')
+                        <li><a href="{{ route('results.upload') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('results.upload') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Upload Results</a></li>
+                        @endcan
+                        @hasrole('Super Admin|Admin')
+                        <li><a href="{{ route('grade-settings.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('grade-settings.*') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Grade Settings</a></li>
+                        @endhasrole
+                    </ul>
+                </li>
+
+                <!-- Attendance -->
+                <li class="submenu group {{ request()->routeIs('attendance.*') ? 'active' : '' }}">
+                    <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('attendance.*') ? 'text-blue-600 bg-blue-50' : '' }}">
+                        <div class="flex items-center gap-3"><i class="fas fa-user-check text-lg w-5 text-center"></i> <span>Attendance</span></div>
+                        <span class="menu-arrow fas fa-chevron-right text-xs transition-transform duration-200 group-[.active]:rotate-90"></span>
+                    </a>
+                    <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
+                        <li><a href="{{ route('attendance.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('attendance.index') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Mark Attendance</a></li>
+                        <li><a href="{{ route('attendance.report') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('attendance.report') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Term Report</a></li>
                     </ul>
                 </li>
 

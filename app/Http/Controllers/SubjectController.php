@@ -12,7 +12,9 @@ class SubjectController extends Controller
     /** index page */
     public function index()
     {
-        $subjectList = Subject::all();
+        $subjectList = Subject::withCount('classes')
+            ->orderBy('name')
+            ->get();
 
         return view('subjects.subject_list', compact('subjectList'));
     }
@@ -27,14 +29,18 @@ class SubjectController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'subject_name' => ['required', 'string'],
-            'class'        => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:10', 'unique:subjects,code'],
+            'description' => ['nullable', 'string', 'max:500'],
         ]);
 
         try {
             Subject::create($validated);
 
-            return response()->json(['message' => 'Subject record saved successfully!', 'redirect' => route('subjects.index')]);
+            return response()->json([
+                'message' => 'Subject record saved successfully!',
+                'redirect' => route('subjects.index'),
+            ]);
         } catch (\Exception $e) {
             Log::error('Failed to save Subject record', ['error' => $e->getMessage()]);
 
@@ -46,6 +52,7 @@ class SubjectController extends Controller
     public function edit(Subject $subject)
     {
         $subjectEdit = $subject;
+
         return view('subjects.subject_edit', compact('subjectEdit'));
     }
 
@@ -53,14 +60,18 @@ class SubjectController extends Controller
     public function update(Request $request, Subject $subject): JsonResponse
     {
         $validated = $request->validate([
-            'subject_name' => ['required', 'string'],
-            'class'        => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:10', 'unique:subjects,code,' . $subject->id],
+            'description' => ['nullable', 'string', 'max:500'],
         ]);
 
         try {
             $subject->update($validated);
 
-            return response()->json(['message' => 'Subject record updated successfully!', 'redirect' => route('subjects.index')]);
+            return response()->json([
+                'message' => 'Subject record updated successfully!',
+                'redirect' => route('subjects.index'),
+            ]);
         } catch (\Exception $e) {
             Log::error('Failed to update Subject record', ['error' => $e->getMessage()]);
 
@@ -84,6 +95,8 @@ class SubjectController extends Controller
 
     public function show(Subject $subject)
     {
-        //
+        $subject->load('classes');
+
+        return view('subjects.subject_show', compact('subject'));
     }
 }

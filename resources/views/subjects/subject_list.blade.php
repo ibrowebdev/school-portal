@@ -61,12 +61,12 @@
                             </td>
                             <td class="px-6 py-4 text-gray-500 font-medium subject_id">{{ $value->subject_id }}</td>
                             <td class="px-6 py-4 font-medium text-gray-800">
-                                <a>{{ $value->subject_name }}</a>
+                                <a>{{ $value->name }}</a>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ $value->class }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ url('subject/edit/'.$value->subject_id) }}" class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">
+                                    <a href="{{ url('subject/edit/'.$value->id) }}" class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">
                                         <i class="far fa-edit"></i>
                                     </a>
                                     <a href="#" class="w-8 h-8 rounded bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100 transition delete" data-bs-toggle="modal" data-bs-target="#delete">

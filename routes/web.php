@@ -1,15 +1,22 @@
 <?php
 
+use App\Http\Controllers\AcademicSessionController;
 use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\GradeSettingController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ParentController;
+use App\Http\Controllers\ResultController;
+use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
     // 3. STUDENTS
     Route::get('student/grid', [StudentController::class, 'studentGrid'])->name('students.grid');
+    Route::get('students/class-sections/{schoolClass}', [StudentController::class, 'getClassSections'])->name('students.class-sections');
     Route::resource('students', StudentController::class)->parameters(['students' => 'id']);
 
     // 4. TEACHERS
@@ -91,4 +99,41 @@ Route::middleware('auth')->group(function () {
     Route::get('account/fees/collections/page', [AccountsController::class, 'index'])->name('fees.index');
     Route::get('add/fees/collection/page', [AccountsController::class, 'create'])->name('fees.create');
     Route::post('fees/collection/save', [AccountsController::class, 'store'])->name('fees.store');
+
+    // ─── 9. ACADEMIC MANAGEMENT ─────────────────────────────
+    Route::resource('academic-sessions', AcademicSessionController::class);
+    Route::resource('academic-sessions.terms', TermController::class)->shallow();
+
+    // 10. SCHOOL CLASSES
+    Route::post('school-classes/{schoolClass}/map-subjects', [SchoolClassController::class, 'mapSubjects'])
+        ->name('school-classes.map-subjects');
+    Route::post('school-classes/{schoolClass}/assign-teachers', [SchoolClassController::class, 'assignTeachers'])
+        ->name('school-classes.assign-teachers');
+    Route::resource('school-classes', SchoolClassController::class);
+
+    // ─── 11. RESULTS ────────────────────────────────────────
+    Route::get('results/upload', [ResultController::class, 'create'])->name('results.upload');
+    Route::post('results/upload', [ResultController::class, 'store'])->name('results.store');
+    Route::get('results', [ResultController::class, 'index'])->name('results.index');
+    Route::get('results/{student}/report', [ResultController::class, 'studentReport'])->name('results.report');
+    Route::get('results/{student}/report/pdf', [ResultController::class, 'exportPdf'])->name('results.report.pdf');
+
+    // AJAX helpers for results
+    Route::get('api/class-subjects/{schoolClass}', [ResultController::class, 'getClassSubjects'])->name('api.class-subjects');
+    Route::get('api/session-terms/{academicSession}', [ResultController::class, 'getSessionTerms'])->name('api.session-terms');
+
+    // ─── 12. GRADE SETTINGS ─────────────────────────────────
+    Route::resource('grade-settings', GradeSettingController::class)->except(['show']);
+
+    // ─── 13. ATTENDANCE ─────────────────────────────────────
+    Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('attendance', [AttendanceController::class, 'store'])->name('attendance.store');
+    Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+
+    // ─── 14. PARENT PORTAL ──────────────────────────────────
+    Route::prefix('parent')->middleware('permission:view-children')->group(function () {
+        Route::get('dashboard', [ParentController::class, 'dashboard'])->name('parent.dashboard');
+        Route::get('children/{child}', [ParentController::class, 'childProfile'])->name('parent.child-profile');
+        Route::get('children/{child}/results', [ParentController::class, 'childResults'])->name('parent.child-results');
+    });
 });

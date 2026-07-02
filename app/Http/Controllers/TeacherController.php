@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Teacher;
+use App\Http\Requests\StoreTeacherRequest;
+use App\Http\Requests\UpdateTeacherRequest;
+use App\Models\TeacherProfile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class TeacherController extends Controller
@@ -13,7 +17,10 @@ class TeacherController extends Controller
     /** index page */
     public function index()
     {
-        $listTeacher = Teacher::with('user')->get();
+        $listTeacher = User::teachers()
+            ->with('teacherProfile')
+            ->orderByDesc('id')
+            ->get();
 
         return view('teacher.list-teachers', compact('listTeacher'));
     }
@@ -21,7 +28,10 @@ class TeacherController extends Controller
     /** teacher Grid */
     public function teacherGrid()
     {
-        $teacherGrid = Teacher::all();
+        $teacherGrid = User::teachers()
+            ->with('teacherProfile')
+            ->orderByDesc('id')
+            ->get();
 
         return view('teacher.teachers-grid', compact('teacherGrid'));
     }
@@ -29,34 +39,62 @@ class TeacherController extends Controller
     /** create page */
     public function create()
     {
-        $users = User::where('type', User::TEACHER)->get();
-
-        return view('teacher.add-teacher', compact('users'));
+        return view('teacher.add-teacher');
     }
 
     /** store record */
-    public function store(Request $request): JsonResponse
+    public function store(StoreTeacherRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'full_name'     => ['required', 'string'],
-            'teacher_id'    => ['nullable', 'string'],
-            'gender'        => ['required', 'string'],
-            'experience'    => ['required', 'string'],
-            'date_of_birth' => ['required', 'string'],
-            'qualification' => ['required', 'string'],
-            'phone_number'  => ['required', 'string'],
-            'address'       => ['required', 'string'],
-            'city'          => ['required', 'string'],
-            'state'         => ['required', 'string'],
-            'zip_code'      => ['required', 'string'],
-            'country'       => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
 
+        DB::beginTransaction();
         try {
-            Teacher::create($validated);
+            // Handle avatar upload
+            $avatarPath = 'photo_defaults.jpg';
+            if ($request->hasFile('avatar')) {
+                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $request->file('avatar')->move(public_path('images'), $filename);
+                $avatarPath = $filename;
+            }
 
-            return response()->json(['message' => 'Teacher record saved successfully!', 'redirect' => route('teachers.index')]);
+            // Create the user record
+            $user = User::create([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'gender' => $validated['gender'],
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'phone_number' => $validated['phone_number'],
+                'type' => User::TEACHER,
+                'status' => 'active',
+                'avatar' => $avatarPath,
+                'join_date' => now()->toDateString(),
+                'password' => Hash::make('password'),
+            ]);
+
+            $user->assignRole(User::TEACHER);
+
+            // Create the teacher profile
+            TeacherProfile::create([
+                'user_id' => $user->id,
+                'employee_id' => $validated['employee_id'] ?? null,
+                'qualification' => $validated['qualification'],
+                'experience' => $validated['experience'] ?? null,
+                'address' => $validated['address'] ?? null,
+                'city' => $validated['city'] ?? null,
+                'state' => $validated['state'] ?? null,
+                'zip_code' => $validated['zip_code'] ?? null,
+                'country' => $validated['country'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Teacher record saved successfully!',
+                'redirect' => route('teachers.index'),
+            ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Failed to save Teacher record', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to save teacher record.'], 500);
@@ -64,35 +102,64 @@ class TeacherController extends Controller
     }
 
     /** edit record */
-    public function edit(Teacher $teacher)
+    public function edit($id)
     {
-        // $teacher is automatically resolved by Route Model Binding
-        $teacher->load('user');
+        $teacher = User::with('teacherProfile')->findOrFail($id);
+
         return view('teacher.edit-teacher', compact('teacher'));
     }
 
     /** update record */
-    public function update(Request $request, Teacher $teacher): JsonResponse
+    public function update(UpdateTeacherRequest $request, $id): JsonResponse
     {
-        $validated = $request->validate([
-            'full_name'     => ['required', 'string'],
-            'gender'        => ['required', 'string'],
-            'date_of_birth' => ['required', 'string'],
-            'qualification' => ['required', 'string'],
-            'experience'    => ['required', 'string'],
-            'phone_number'  => ['required', 'string'],
-            'address'       => ['required', 'string'],
-            'city'          => ['required', 'string'],
-            'state'         => ['required', 'string'],
-            'zip_code'      => ['required', 'string'],
-            'country'       => ['required', 'string'],
-        ]);
+        $validated = $request->validated();
+        $teacher = User::findOrFail($id);
 
+        DB::beginTransaction();
         try {
-            $teacher->update($validated);
+            // Handle avatar upload
+            if ($request->hasFile('avatar')) {
+                if ($teacher->avatar !== 'photo_defaults.jpg' && ! empty($teacher->avatar) && file_exists(public_path('images/' . $teacher->avatar))) {
+                    unlink(public_path('images/' . $teacher->avatar));
+                }
+                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $request->file('avatar')->move(public_path('images'), $filename);
+                $teacher->avatar = $filename;
+            }
 
-            return response()->json(['message' => 'Teacher record updated successfully!', 'redirect' => route('teachers.index')]);
+            // Update user record
+            $teacher->update([
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'email' => $validated['email'],
+                'gender' => $validated['gender'],
+                'date_of_birth' => $validated['date_of_birth'] ?? null,
+                'phone_number' => $validated['phone_number'],
+            ]);
+
+            // Update or create teacher profile
+            $teacher->teacherProfile()->updateOrCreate(
+                ['user_id' => $teacher->id],
+                [
+                    'employee_id' => $validated['employee_id'] ?? null,
+                    'qualification' => $validated['qualification'],
+                    'experience' => $validated['experience'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'city' => $validated['city'] ?? null,
+                    'state' => $validated['state'] ?? null,
+                    'zip_code' => $validated['zip_code'] ?? null,
+                    'country' => $validated['country'] ?? null,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Teacher record updated successfully!',
+                'redirect' => route('teachers.index'),
+            ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Failed to update Teacher record', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to update teacher record.'], 500);
@@ -100,8 +167,10 @@ class TeacherController extends Controller
     }
 
     /** delete record */
-    public function destroy(Teacher $teacher): JsonResponse
+    public function destroy($id): JsonResponse
     {
+        $teacher = User::findOrFail($id);
+
         try {
             $teacher->delete();
 
@@ -113,9 +182,10 @@ class TeacherController extends Controller
         }
     }
 
-    public function show(Teacher $teacher)
+    public function show($id)
     {
-        // Not implemented in original, but needed for resource
+        $teacher = User::with(['teacherProfile', 'assignedClasses'])->findOrFail($id);
+
         return view('teacher.show-teacher', compact('teacher'));
     }
 }

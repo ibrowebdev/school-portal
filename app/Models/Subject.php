@@ -4,28 +4,35 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subject extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'subject_id',
-        'subject_name',
-        'class',
+        'name',
+        'code',
+        'description',
     ];
 
+    // ─── Relationships ─────────────────────────────────────────
+
     /**
-     * Auto-generate a prefixed subject_id on creation.
+     * Classes this subject is mapped to.
      */
-    protected static function booted(): void
+    public function classes(): BelongsToMany
     {
-        static::creating(function (Subject $model) {
-            if (empty($model->subject_id)) {
-                $latest = static::orderByDesc('subject_id')->value('subject_id');
-                $nextID = $latest ? intval(substr($latest, 3)) + 1 : 1;
-                $model->subject_id = 'PRE' . sprintf('%03d', $nextID);
-            }
-        });
+        return $this->belongsToMany(SchoolClass::class, 'class_subject')
+            ->withTimestamps();
+    }
+
+    /**
+     * Results recorded for this subject.
+     */
+    public function results(): HasMany
+    {
+        return $this->hasMany(Result::class);
     }
 }
