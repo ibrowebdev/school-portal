@@ -44,7 +44,7 @@
 <body>
 
     <div class="header">
-        <h1 class="school-name">PreSkool International</h1>
+        <h1 class="school-name">{{ \App\Models\Setting::get('website_name', 'School Portal') }}</h1>
         <p class="school-address">123 Education Lane, Learning City</p>
         <div class="report-title">Terminal Report Card</div>
     </div>

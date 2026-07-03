@@ -58,8 +58,11 @@ Route::middleware('auth')->group(function () {
         Route::get('student/dashboard', 'studentDashboardIndex')->name('student/dashboard');
     });
 
-    Route::get('setting/page', [SettingController::class, 'index'])->name('setting/page');
-
+    // Settings
+    Route::controller(SettingController::class)->group(function () {
+        Route::get('setting/page', 'index')->name('setting/page');
+        Route::post('setting/update', 'update')->name('setting.update');
+    });
     // 2. USER MANAGEMENT
     Route::post('change/password', [UserController::class, 'changePassword'])->name('change/password');
     Route::get('get-users-data', [UserController::class, 'getUsersData'])->name('get-users-data');

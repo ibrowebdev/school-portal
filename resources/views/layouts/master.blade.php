@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>Admin Dashboard</title>
-    <link rel="shortcut icon" href="{{ URL::to('assets/img/favicon.png') }}">
+    <title>@setting('website_name', 'School Portal')</title>
+    <link rel="shortcut icon" href="{{ asset(\App\Models\Setting::get('favicon', 'assets/img/favicon.png')) }}">
     <link rel="stylesheet" href="{{ URL::to('assets/plugins/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ URL::to('assets/plugins/select2/css/select2.min.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -17,8 +17,8 @@
         <header class="fixed top-0 w-full bg-white border-b border-gray-200 z-50 flex items-center justify-between px-4 lg:px-6 h-16 shadow-sm">
             <div class="flex items-center gap-6">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
-                    <img src="{{ URL::to('assets/img/logo-small.png') }}" alt="Logo" class="w-8 h-8">
-                    <span class="font-bold text-xl text-gray-800 hidden md:block">School Portal</span>
+                    <img src="{{ asset(\App\Models\Setting::get('logo', 'assets/img/logo-small.png')) }}" alt="Logo" class="w-8 h-8 object-contain">
+                    <span class="font-bold text-xl text-gray-800 hidden md:block">@setting('website_name', 'School Portal')</span>
                 </a>
                 <button id="toggle_btn" class="text-gray-500 hover:text-gray-700 focus:outline-none transition">
                     <i class="fas fa-bars text-xl"></i>

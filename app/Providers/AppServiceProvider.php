@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 use App\Models\Menu;
 use View;
 
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Blade::directive('setting', function ($expression) {
+            return "<?php echo \App\Models\Setting::get({$expression}); ?>";
+        });
     }
 }
