@@ -11,8 +11,7 @@ class FeesInformation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'student_id',
-        'student_name',
+        'user_id',
         'gender',
         'fees_type',
         'fees_amount',
@@ -29,6 +28,6 @@ class FeesInformation extends Model
 
     public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

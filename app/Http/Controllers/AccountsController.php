@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FeesInformation;
+use App\Models\FeesType;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,15 +21,16 @@ class AccountsController extends Controller
     }
 
     /** add/fees/collection/page */
-    public function addFeesCollection()
+    public function create()
     {
         $users = User::whereIn('type', [User::STUDENT, User::PARENT])->get();
+        $feesType = FeesType::all();
 
-        return view('accounts.add-fees-collection', compact('users'));
+        return view('accounts.add-fees-collection', compact('users', 'feesType'));
     }
 
     /** saveRecord */
-    public function saveRecord(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'student_id'   => ['required', 'string'],
@@ -39,8 +41,12 @@ class AccountsController extends Controller
             'paid_date'    => ['required', 'string'],
         ]);
 
+        $feeData = $validated;
+        $feeData['user_id'] = $feeData['student_id'];
+        unset($feeData['student_id'], $feeData['student_name']);
+
         try {
-            FeesInformation::create($validated);
+            FeesInformation::create($feeData);
 
             return response()->json(['message' => 'Fees Collection added successfully!']);
         } catch (\Exception $e) {

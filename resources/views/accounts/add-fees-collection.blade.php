@@ -12,7 +12,7 @@
             <ul id="form-errors-list" class="list-disc list-inside text-sm"></ul>
         </div>
         
-        <form action="{{ route('fees/collection/save') }}" method="POST" class="x-submit space-y-6" data-then="reload">
+        <form action="{{ route('fees.store') }}" method="POST" class="x-submit space-y-6" data-then="reload">
             @csrf
             
             <h5 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Fees Information</h5>
@@ -24,7 +24,7 @@
                     <select class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm select" id="student_name" name="student_name">
                         <option selected disabled>-- Select --</option>
                         @foreach($users as $key => $names)
-                            <option value="{{ $names->name }}" data-student_id="{{ $names->user_id }}" {{ old('full_name') == $names->name ? "selected" :""}}>{{ $names->name }}</option>
+                            <option value="{{ $names->name }}" data-student_id="{{ $names->id }}" {{ old('full_name') == $names->name ? "selected" :""}}>{{ $names->name }}</option>
                         @endforeach
                     </select>
                 </div>

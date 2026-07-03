@@ -39,11 +39,11 @@
                 <tbody class="divide-y divide-gray-100">
                     @foreach($feesInformation as $key => $value)
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 text-gray-500 font-medium">ST-{{ $value->student_id }}</td>
+                            <td class="px-6 py-4 text-gray-500 font-medium">ST-{{ str_pad($value->user_id, 3, '0', STR_PAD_LEFT) }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <img class="w-8 h-8 rounded-full object-cover border border-gray-200" src="{{ URL::to('/images/'. $value->avatar) }}" alt="{{ $value->student_name }}">
-                                    <span class="font-medium text-gray-800">{{ $value->student_name }}</span>
+                                    <img class="w-8 h-8 rounded-full object-cover border border-gray-200" src="{{ URL::to('/images/'. $value->student?->avatar) }}" alt="{{ $value->student?->name }}">
+                                    <span class="font-medium text-gray-800">{{ $value->student?->name }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ $value->gender }}</td>
