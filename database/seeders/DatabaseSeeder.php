@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
 
         // ─── 7. Users ───────────────────────────────────────────
 
-        // Super Admin
+        // Super Admin (Hardcoded for easy login)
         $admin = User::factory()->create([
             'first_name' => 'Super',
             'last_name' => 'Admin',
@@ -127,7 +127,16 @@ class DatabaseSeeder extends Seeder
         ]);
         $admin->assignRole(User::SUPER_ADMIN);
 
-        // Teacher
+        // Additional Admins
+        for ($i = 0; $i < 2; $i++) {
+            $adminUser = User::factory()->create([
+                'type' => User::ADMIN,
+                'status' => StatusEnum::ACTIVE->value,
+            ]);
+            $adminUser->assignRole(User::ADMIN);
+        }
+
+        // Teacher (Hardcoded for easy login)
         $teacher = User::factory()->create([
             'first_name' => 'John',
             'last_name' => 'Okafor',
@@ -164,7 +173,29 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Parent
+        // Additional Teachers
+        for ($i = 0; $i < 5; $i++) {
+            $teacherUser = User::factory()->create([
+                'type' => User::TEACHER,
+                'status' => StatusEnum::ACTIVE->value,
+            ]);
+            $teacherUser->assignRole(User::TEACHER);
+
+            TeacherProfile::firstOrCreate(
+                ['user_id' => $teacherUser->id],
+                [
+                    'employee_id' => 'TCH-' . str_pad($i + 2, 3, '0', STR_PAD_LEFT),
+                    'qualification' => 'B.Sc ' . fake()->word(),
+                    'experience' => fake()->numberBetween(1, 10) . ' years',
+                    'address' => fake()->address(),
+                    'city' => fake()->city(),
+                    'state' => 'Lagos',
+                    'country' => 'Nigeria',
+                ]
+            );
+        }
+
+        // Parent (Hardcoded for easy login)
         $parent = User::factory()->create([
             'first_name' => 'Mrs. Amina',
             'last_name' => 'Bello',
@@ -175,7 +206,7 @@ class DatabaseSeeder extends Seeder
         ]);
         $parent->assignRole(User::PARENT);
 
-        // Student (linked to parent)
+        // Student (Hardcoded for easy login)
         $student = User::factory()->create([
             'first_name' => 'Ibrahim',
             'last_name' => 'Bello',
@@ -203,5 +234,61 @@ class DatabaseSeeder extends Seeder
                 'parent_id' => $parent->id,
             ]
         );
+
+        // Dynamic Parents and Students
+        // Requirement: All classes must have at least 10 students. 
+        // We have 6 classes -> 60 new students.
+        // A parent will have a minimum of 1 student and a max of 2.
+        $allClassModels = SchoolClass::with('sections')->get();
+        $admissionCounter = 2; // start from 2
+        
+        $currentParent = null;
+        $currentParentChildrenCount = 0;
+        $targetChildrenForCurrentParent = 0;
+
+        foreach ($allClassModels as $schoolClass) {
+            $sections = $schoolClass->sections;
+            $studentsPerSection = 5; // 5 per section * 2 sections = 10 students per class
+
+            foreach ($sections as $section) {
+                for ($i = 0; $i < $studentsPerSection; $i++) {
+                    
+                    // Do we need a new parent?
+                    if (!$currentParent || $currentParentChildrenCount >= $targetChildrenForCurrentParent) {
+                        $currentParent = User::factory()->create([
+                            'type' => User::PARENT,
+                            'status' => StatusEnum::ACTIVE->value,
+                        ]);
+                        $currentParent->assignRole(User::PARENT);
+                        $currentParentChildrenCount = 0;
+                        $targetChildrenForCurrentParent = rand(1, 2);
+                    }
+
+                    // Create Student
+                    $newStudent = User::factory()->create([
+                        'type' => User::STUDENT,
+                        'status' => StatusEnum::ACTIVE->value,
+                    ]);
+                    $newStudent->assignRole(User::STUDENT);
+
+                    StudentProfile::firstOrCreate(
+                        ['user_id' => $newStudent->id],
+                        [
+                            'admission_id' => 'ADM-2025-' . str_pad($admissionCounter, 3, '0', STR_PAD_LEFT),
+                            'roll_number' => str_pad($i + 2, 3, '0', STR_PAD_LEFT), // Avoid colliding with hardcoded roll 001
+                            'school_class_id' => $schoolClass->id,
+                            'class_section_id' => $section->id,
+                            'blood_group' => collect(['O+', 'A+', 'B+', 'AB+'])->random(),
+                            'religion' => collect(['Islam', 'Christianity'])->random(),
+                            'address' => fake()->address(),
+                            'parent_id' => $currentParent->id,
+                        ]
+                    );
+
+                    $currentParentChildrenCount++;
+                    $admissionCounter++;
+                }
+            }
+        }
     }
 }

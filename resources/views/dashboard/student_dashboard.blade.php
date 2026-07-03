@@ -17,6 +17,13 @@
                 </div>
             </div>
 
+            <!-- Financial Overview (New Billing System) -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <livewire:student-financial-overview :student="auth()->user()" />
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-xl-3 col-sm-6 col-12 d-flex">
                     <div class="card bg-comman w-100">

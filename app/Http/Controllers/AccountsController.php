@@ -14,9 +14,9 @@ class AccountsController extends Controller
     public function index()
     {
         // Eloquent relationship instead of join
-        $feesInfo = FeesInformation::with('student')->get();
+        $feesInformation = FeesInformation::with('student')->get();
 
-        return view('accounts.feescollections', compact('feesInfo'));
+        return view('accounts.feescollections', compact('feesInformation'));
     }
 
     /** add/fees/collection/page */

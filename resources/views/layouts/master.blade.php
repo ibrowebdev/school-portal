@@ -58,7 +58,10 @@
                         </div>
                         <a href="{{ route('user/profile/page') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"><i class="far fa-user w-5"></i> My Profile</a>
                         <div class="border-t border-gray-50 my-1"></div>
-                        <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"><i class="fas fa-sign-out-alt w-5"></i> Logout</a>
+                        <form action="{{ route('logout') }}" method="post" class="x-submit" data-then="reload">
+
+                            <button type="submit">Logout</button>
+                        </form>
                     </div>
                 </div>
             </div>

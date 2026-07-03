@@ -95,6 +95,9 @@
                     </div>
                 @endif
             </x-card>
+
+            {{-- Financial Overview --}}
+            <livewire:student-financial-overview :student="$child" />
         </div>
     </div>
 </div>

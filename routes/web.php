@@ -58,80 +58,106 @@ Route::middleware('auth')->group(function () {
         Route::get('student/dashboard', 'studentDashboardIndex')->name('student/dashboard');
     });
 
-    // Settings
-    Route::controller(SettingController::class)->group(function () {
-        Route::get('setting/page', 'index')->name('setting/page');
-        Route::post('setting/update', 'update')->name('setting.update');
+    // ─── SUPER-ADMIN ONLY ROUTES ────────────────────────────────
+    Route::middleware(['role:super-admin'])->group(function () {
+        Route::get('roles-permissions', [\App\Http\Controllers\RolePermissionController::class, 'index'])->name('roles-permissions.index');
     });
-    // 2. USER MANAGEMENT
-    Route::post('change/password', [UserController::class, 'changePassword'])->name('change/password');
-    Route::get('get-users-data', [UserController::class, 'getUsersData'])->name('get-users-data');
-    Route::resource('users', UserController::class);
 
-    // 3. STUDENTS
-    Route::get('student/grid', [StudentController::class, 'studentGrid'])->name('students.grid');
-    Route::get('students/class-sections/{schoolClass}', [StudentController::class, 'getClassSections'])->name('students.class-sections');
-    Route::resource('students', StudentController::class)->parameters(['students' => 'id']);
+    // ─── ADMIN & SUPER-ADMIN ONLY ROUTES ────────────────────────
+    Route::middleware(['role:super-admin|admin'])->group(function () {
+        // Billing & Accounts
+        Route::get('manage-class-fees', function() { return view('accounts.manage-class-fees'); })->name('manage-class-fees');
+        Route::get('record-student-payment', function() { return view('accounts.record-student-payment'); })->name('record-student-payment');
 
-    // 4. TEACHERS
-    Route::get('teacher/grid/page', [TeacherController::class, 'teacherGrid'])->name('teachers.grid');
-    Route::resource('teachers', TeacherController::class)->parameters(['teachers' => 'id']);
+        // Settings
+        Route::controller(SettingController::class)->group(function () {
+            Route::get('setting/page', 'index')->name('setting/page');
+            Route::post('setting/update', 'update')->name('setting.update');
+        });
 
-    // 5. DEPARTMENTS
-    Route::get('department/get-data-list', [DepartmentController::class, 'getDataList'])->name('departments.data-list');
-    Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'id']);
+        // 2. USER MANAGEMENT
+        Route::post('change/password', [UserController::class, 'changePassword'])->name('change/password');
+        Route::get('get-users-data', [UserController::class, 'getUsersData'])->name('get-users-data');
+        Route::resource('users', UserController::class);
 
-    // 6. SUBJECTS
-    Route::resource('subjects', SubjectController::class)->parameters(['subjects' => 'id']);
+        // 5. DEPARTMENTS
+        Route::get('department/get-data-list', [DepartmentController::class, 'getDataList'])->name('departments.data-list');
+        Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'id']);
 
-    // 7. INVOICES
-    Route::prefix('invoice')->controller(InvoiceController::class)->group(function () {
-        Route::get('paid/page', 'invoicePaid')->name('invoices.paid');
-        Route::get('overdue/page', 'invoiceOverdue')->name('invoices.overdue');
-        Route::get('draft/page', 'invoiceDraft')->name('invoices.draft');
-        Route::get('recurring/page', 'invoiceRecurring')->name('invoices.recurring');
-        Route::get('cancelled/page', 'invoiceCancelled')->name('invoices.cancelled');
-        Route::get('grid/page', 'invoiceGrid')->name('invoices.grid');
-        Route::get('settings/page', 'invoiceSettings')->name('invoices.settings');
-        Route::get('settings/tax/page', 'invoiceSettingsTax')->name('invoices.settings-tax');
-        Route::get('settings/bank/page', 'invoiceSettingsBank')->name('invoices.settings-bank');
+        // 6. SUBJECTS
+        Route::resource('subjects', SubjectController::class)->parameters(['subjects' => 'id']);
+
+        // 7. INVOICES
+        Route::prefix('invoice')->controller(InvoiceController::class)->group(function () {
+            Route::get('paid/page', 'invoicePaid')->name('invoices.paid');
+            Route::get('overdue/page', 'invoiceOverdue')->name('invoices.overdue');
+            Route::get('draft/page', 'invoiceDraft')->name('invoices.draft');
+            Route::get('recurring/page', 'invoiceRecurring')->name('invoices.recurring');
+            Route::get('cancelled/page', 'invoiceCancelled')->name('invoices.cancelled');
+            Route::get('grid/page', 'invoiceGrid')->name('invoices.grid');
+            Route::get('settings/page', 'invoiceSettings')->name('invoices.settings');
+            Route::get('settings/tax/page', 'invoiceSettingsTax')->name('invoices.settings-tax');
+            Route::get('settings/bank/page', 'invoiceSettingsBank')->name('invoices.settings-bank');
+        });
+        Route::resource('invoices', InvoiceController::class)->parameters(['invoices' => 'id']);
+
+        // 8. ACCOUNTS / FEES
+        Route::get('account/fees/collections/page', [AccountsController::class, 'index'])->name('fees.index');
+        Route::get('add/fees/collection/page', [AccountsController::class, 'create'])->name('fees.create');
+        Route::post('fees/collection/save', [AccountsController::class, 'store'])->name('fees.store');
+
+        // ─── 9. ACADEMIC MANAGEMENT ─────────────────────────────
+        Route::resource('academic-sessions', AcademicSessionController::class);
+        Route::resource('academic-sessions.terms', TermController::class)->shallow();
+
+        // 10. SCHOOL CLASSES
+        Route::post('school-classes/{schoolClass}/map-subjects', [SchoolClassController::class, 'mapSubjects'])
+            ->name('school-classes.map-subjects');
+        Route::post('school-classes/{schoolClass}/assign-teachers', [SchoolClassController::class, 'assignTeachers'])
+            ->name('school-classes.assign-teachers');
+        Route::resource('school-classes', SchoolClassController::class);
+        
+        // ─── 12. GRADE SETTINGS ─────────────────────────────────
+        Route::resource('grade-settings', GradeSettingController::class)->except(['show']);
     });
-    Route::resource('invoices', InvoiceController::class)->parameters(['invoices' => 'id']);
 
-    // 8. ACCOUNTS / FEES
-    Route::get('account/fees/collections/page', [AccountsController::class, 'index'])->name('fees.index');
-    Route::get('add/fees/collection/page', [AccountsController::class, 'create'])->name('fees.create');
-    Route::post('fees/collection/save', [AccountsController::class, 'store'])->name('fees.store');
+    // ─── TEACHER, ADMIN & SUPER-ADMIN ROUTES ────────────────────
+    Route::middleware(['role:super-admin|admin|teacher'])->group(function () {
+        // 3. STUDENTS
+        Route::get('student/grid', [StudentController::class, 'studentGrid'])->name('students.grid');
+        Route::get('students/class-sections/{schoolClass}', [StudentController::class, 'getClassSections'])->name('students.class-sections');
+        Route::resource('students', StudentController::class)->parameters(['students' => 'id']);
 
-    // ─── 9. ACADEMIC MANAGEMENT ─────────────────────────────
-    Route::resource('academic-sessions', AcademicSessionController::class);
-    Route::resource('academic-sessions.terms', TermController::class)->shallow();
-
-    // 10. SCHOOL CLASSES
-    Route::post('school-classes/{schoolClass}/map-subjects', [SchoolClassController::class, 'mapSubjects'])
-        ->name('school-classes.map-subjects');
-    Route::post('school-classes/{schoolClass}/assign-teachers', [SchoolClassController::class, 'assignTeachers'])
-        ->name('school-classes.assign-teachers');
-    Route::resource('school-classes', SchoolClassController::class);
+        // 4. TEACHERS
+        Route::get('teacher/grid/page', [TeacherController::class, 'teacherGrid'])->name('teachers.grid');
+        Route::resource('teachers', TeacherController::class)->parameters(['teachers' => 'id']);
+    });
 
     // ─── 11. RESULTS ────────────────────────────────────────
-    Route::get('results/upload', [ResultController::class, 'create'])->name('results.upload');
-    Route::post('results/upload', [ResultController::class, 'store'])->name('results.store');
-    Route::get('results', [ResultController::class, 'index'])->name('results.index');
-    Route::get('results/{student}/report', [ResultController::class, 'studentReport'])->name('results.report');
-    Route::get('results/{student}/report/pdf', [ResultController::class, 'exportPdf'])->name('results.report.pdf');
+    Route::middleware(['permission:upload-results'])->group(function () {
+        Route::get('results/upload', [ResultController::class, 'create'])->name('results.upload');
+        Route::post('results/upload', [ResultController::class, 'store'])->name('results.store');
+    });
 
-    // AJAX helpers for results
+    Route::middleware(['permission:view-results'])->group(function () {
+        Route::get('results', [ResultController::class, 'index'])->name('results.index');
+        Route::get('results/{student}/report', [ResultController::class, 'studentReport'])->name('results.report');
+        Route::get('results/{student}/report/pdf', [ResultController::class, 'exportPdf'])->name('results.report.pdf');
+    });
+
+    // AJAX helpers for results (Available to any authenticated user who might need them)
     Route::get('api/class-subjects/{schoolClass}', [ResultController::class, 'getClassSubjects'])->name('api.class-subjects');
     Route::get('api/session-terms/{academicSession}', [ResultController::class, 'getSessionTerms'])->name('api.session-terms');
 
-    // ─── 12. GRADE SETTINGS ─────────────────────────────────
-    Route::resource('grade-settings', GradeSettingController::class)->except(['show']);
-
     // ─── 13. ATTENDANCE ─────────────────────────────────────
-    Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::post('attendance', [AttendanceController::class, 'store'])->name('attendance.store');
-    Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+    Route::middleware(['permission:mark-attendance'])->group(function () {
+        Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+        Route::post('attendance', [AttendanceController::class, 'store'])->name('attendance.store');
+    });
+    
+    Route::middleware(['permission:view-attendance-report'])->group(function () {
+        Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
+    });
 
     // ─── 14. PARENT PORTAL ──────────────────────────────────
     Route::prefix('parent')->middleware('permission:view-children')->group(function () {
