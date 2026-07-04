@@ -11,6 +11,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
@@ -60,14 +61,18 @@ Route::middleware('auth')->group(function () {
 
     // ─── SUPER-ADMIN ONLY ROUTES ────────────────────────────────
     Route::middleware(['role:super-admin'])->group(function () {
-        Route::get('roles-permissions', [\App\Http\Controllers\RolePermissionController::class, 'index'])->name('roles-permissions.index');
+        Route::get('roles-permissions', [RolePermissionController::class, 'index'])->name('roles-permissions.index');
     });
 
     // ─── ADMIN & SUPER-ADMIN ONLY ROUTES ────────────────────────
     Route::middleware(['role:super-admin|admin'])->group(function () {
         // Billing & Accounts
-        Route::get('manage-class-fees', function() { return view('accounts.manage-class-fees'); })->name('manage-class-fees');
-        Route::get('record-student-payment', function() { return view('accounts.record-student-payment'); })->name('record-student-payment');
+        Route::get('manage-class-fees', function () {
+            return view('accounts.manage-class-fees');
+        })->name('manage-class-fees');
+        Route::get('record-student-payment', function () {
+            return view('accounts.record-student-payment');
+        })->name('record-student-payment');
 
         // Settings
         Route::controller(SettingController::class)->group(function () {
@@ -85,7 +90,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'id']);
 
         // 6. SUBJECTS
-        Route::get('subjects/register', function() { return view('academic.subjects.register'); })->name('subjects.register');
+        Route::get('subjects/register', function () {
+            return view('academic.subjects.register');
+        })->name('subjects.register');
         Route::resource('subjects', SubjectController::class)->parameters(['subjects' => 'id']);
 
         // 7. INVOICES
@@ -115,7 +122,7 @@ Route::middleware('auth')->group(function () {
         Route::post('school-classes/{schoolClass}/assign-teachers', [SchoolClassController::class, 'assignTeachers'])
             ->name('school-classes.assign-teachers');
         Route::resource('school-classes', SchoolClassController::class);
-        
+
         // ─── 12. GRADE SETTINGS ─────────────────────────────────
         Route::resource('grade-settings', GradeSettingController::class)->except(['show']);
     });
@@ -153,7 +160,7 @@ Route::middleware('auth')->group(function () {
         Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
         Route::post('attendance', [AttendanceController::class, 'store'])->name('attendance.store');
     });
-    
+
     Route::middleware(['permission:view-attendance-report'])->group(function () {
         Route::get('attendance/report', [AttendanceController::class, 'report'])->name('attendance.report');
     });

@@ -18,12 +18,16 @@ use Spatie\Permission\Traits\HasRoles;
 #[ObservedBy([UserObserver::class])]
 class User extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable, HasMediaTrait, InteractWithUserAttributes, SoftDeletes;
+    use HasFactory, HasMediaTrait, HasRoles, InteractWithUserAttributes, Notifiable, SoftDeletes;
 
     const STUDENT = 'student';
+
     const TEACHER = 'teacher';
+
     const PARENT = 'parent';
+
     const ADMIN = 'admin';
+
     const SUPER_ADMIN = 'super-admin';
 
     protected $fillable = [
@@ -56,7 +60,6 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
 
     // ─── Type Helpers ───────────────────────────────────────
 

@@ -42,7 +42,7 @@ class InvoiceCustomerName extends Model
             if (empty($model->invoice_id)) {
                 $latest = static::orderByDesc('invoice_id')->value('invoice_id');
                 $nextID = $latest ? intval(substr($latest, 5)) + 1 : 1;
-                $model->invoice_id = 'IN0' . sprintf('%05d', $nextID);
+                $model->invoice_id = 'IN0'.sprintf('%05d', $nextID);
             }
         });
     }

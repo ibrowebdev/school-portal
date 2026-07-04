@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ClassSection;
+use App\Models\AcademicSession;
 use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
-use App\Models\AcademicSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class SchoolClassController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(SchoolClass::class);
+    }
+
     public function index()
     {
         $classes = SchoolClass::withCount(['studentProfiles', 'subjects', 'sections'])
@@ -82,7 +86,7 @@ class SchoolClassController extends Controller
     public function update(Request $request, SchoolClass $schoolClass): JsonResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100', 'unique:school_classes,name,' . $schoolClass->id],
+            'name' => ['required', 'string', 'max:100', 'unique:school_classes,name,'.$schoolClass->id],
             'level' => ['nullable', 'string', 'in:junior,senior'],
             'capacity' => ['nullable', 'integer', 'min:1'],
         ]);
@@ -113,8 +117,6 @@ class SchoolClassController extends Controller
             return response()->json(['message' => 'Failed to delete class.'], 500);
         }
     }
-
-
 
     /**
      * Assign teachers to a class (sync pivot).

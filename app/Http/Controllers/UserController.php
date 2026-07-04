@@ -12,10 +12,16 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class);
+    }
+
     /** index page */
     public function index()
     {
         $users = User::with('roles')->get();
+
         return view('users.index', compact('users'));
     }
 
@@ -31,23 +37,23 @@ class UserController extends Controller
     public function update(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
-            'name'         => ['required', 'string', 'max:255'],
-            'email'        => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'phone_number' => ['required', 'string', 'max:255'],
-            'status'       => ['required', 'string', 'max:255'],
-            'role_name'    => ['required', 'string', 'max:255'],
-            'position'     => ['required', 'string', 'max:255'],
-            'department'   => ['required', 'string', 'max:255'],
-            'avatar'       => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'status' => ['required', 'string', 'max:255'],
+            'role_name' => ['required', 'string', 'max:255'],
+            'position' => ['required', 'string', 'max:255'],
+            'department' => ['required', 'string', 'max:255'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         try {
             if ($request->hasFile('avatar')) {
                 // Delete old avatar if it's not the default
-                if ($user->avatar !== 'photo_defaults.jpg' && ! empty($user->avatar) && file_exists(public_path('images/' . $user->avatar))) {
-                    unlink(public_path('images/' . $user->avatar));
+                if ($user->avatar !== 'photo_defaults.jpg' && ! empty($user->avatar) && file_exists(public_path('images/'.$user->avatar))) {
+                    unlink(public_path('images/'.$user->avatar));
                 }
-                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
                 $request->file('avatar')->move(public_path('images'), $filename);
                 $validated['avatar'] = $filename;
             } else {
@@ -73,8 +79,8 @@ class UserController extends Controller
     public function destroy(User $user): JsonResponse
     {
         try {
-            if ($user->avatar !== 'photo_defaults.jpg' && ! empty($user->avatar) && file_exists(public_path('images/' . $user->avatar))) {
-                unlink(public_path('images/' . $user->avatar));
+            if ($user->avatar !== 'photo_defaults.jpg' && ! empty($user->avatar) && file_exists(public_path('images/'.$user->avatar))) {
+                unlink(public_path('images/'.$user->avatar));
             }
 
             $user->delete();
@@ -106,8 +112,8 @@ class UserController extends Controller
     public function changePassword(Request $request): JsonResponse
     {
         $request->validate([
-            'current_password'     => ['required', new MatchOldPassword],
-            'new_password'         => ['required'],
+            'current_password' => ['required', new MatchOldPassword],
+            'new_password' => ['required'],
             'new_confirm_password' => ['same:new_password'],
         ]);
 
@@ -123,89 +129,89 @@ class UserController extends Controller
     }
 
     /** get users data */
-//     public function getUsersData(Request $request): JsonResponse
-//     {
-//         $draw            = $request->get('draw');
-//         $start           = $request->get('start');
-//         $rowPerPage      = $request->get('length');
-//         $columnIndex_arr = $request->get('order');
-//         $columnName_arr  = $request->get('columns');
-//         $order_arr       = $request->get('order');
-//         $search_arr      = $request->get('search');
+    //     public function getUsersData(Request $request): JsonResponse
+    //     {
+    //         $draw            = $request->get('draw');
+    //         $start           = $request->get('start');
+    //         $rowPerPage      = $request->get('length');
+    //         $columnIndex_arr = $request->get('order');
+    //         $columnName_arr  = $request->get('columns');
+    //         $order_arr       = $request->get('order');
+    //         $search_arr      = $request->get('search');
 
-//         $columnIndex     = $columnIndex_arr[0]['column'];
-//         $columnName      = $columnName_arr[$columnIndex]['data'];
-//         $columnSortOrder = $order_arr[0]['dir'];
-//         $searchValue     = $search_arr['value'];
+    //         $columnIndex     = $columnIndex_arr[0]['column'];
+    //         $columnName      = $columnName_arr[$columnIndex]['data'];
+    //         $columnSortOrder = $order_arr[0]['dir'];
+    //         $searchValue     = $search_arr['value'];
 
-//         $totalRecords = User::count();
+    //         $totalRecords = User::count();
 
-//         $searchQuery = function ($query) use ($searchValue) {
-//             $query->where('name', 'like', '%' . $searchValue . '%')
-//                 ->orWhere('email', 'like', '%' . $searchValue . '%')
-//                 ->orWhere('position', 'like', '%' . $searchValue . '%')
-//                 ->orWhere('phone_number', 'like', '%' . $searchValue . '%')
-//                 ->orWhere('join_date', 'like', '%' . $searchValue . '%')
-//                 ->orWhere('type', 'like', '%' . $searchValue . '%')
-//                 ->orWhere('status', 'like', '%' . $searchValue . '%');
-//         };
+    //         $searchQuery = function ($query) use ($searchValue) {
+    //             $query->where('name', 'like', '%' . $searchValue . '%')
+    //                 ->orWhere('email', 'like', '%' . $searchValue . '%')
+    //                 ->orWhere('position', 'like', '%' . $searchValue . '%')
+    //                 ->orWhere('phone_number', 'like', '%' . $searchValue . '%')
+    //                 ->orWhere('join_date', 'like', '%' . $searchValue . '%')
+    //                 ->orWhere('type', 'like', '%' . $searchValue . '%')
+    //                 ->orWhere('status', 'like', '%' . $searchValue . '%');
+    //         };
 
-//         $totalRecordsWithFilter = User::where($searchQuery)->count();
+    //         $totalRecordsWithFilter = User::where($searchQuery)->count();
 
-//         $records = User::where($searchQuery)
-//             ->orderBy($columnName, $columnSortOrder)
-//             ->skip($start)
-//             ->take($rowPerPage)
-//             ->get();
+    //         $records = User::where($searchQuery)
+    //             ->orderBy($columnName, $columnSortOrder)
+    //             ->skip($start)
+    //             ->take($rowPerPage)
+    //             ->get();
 
-//         $data_arr = [];
+    //         $data_arr = [];
 
-//         foreach ($records as $record) {
-//             $modify = '
-//                 <td class="text-end">
-//                     <div class="actions">
-//                         <a href="' . route('users.edit', $record->id) . '" class="btn btn-sm bg-danger-light">
-//                             <i class="far fa-edit me-2"></i>
-//                         </a>
-//                         <a class="btn btn-sm bg-danger-light delete_user" data-bs-toggle="modal" data-id="' . $record->id . '" data-bs-target="#delete_user">
-//                             <i class="fe fe-trash-2"></i>
-//                         </a>
-//                     </div>
-//                 </td>
-//             ';
-//             if ($record->status == 'Active') {
-//                 $status = '<span class="badge badge-success">' . $record->status . '</span>';
-//             } else {
-//                 $status = '<span class="badge badge-danger">' . $record->status . '</span>';
-//             }
+    //         foreach ($records as $record) {
+    //             $modify = '
+    //                 <td class="text-end">
+    //                     <div class="actions">
+    //                         <a href="' . route('users.edit', $record->id) . '" class="btn btn-sm bg-danger-light">
+    //                             <i class="far fa-edit me-2"></i>
+    //                         </a>
+    //                         <a class="btn btn-sm bg-danger-light delete_user" data-bs-toggle="modal" data-id="' . $record->id . '" data-bs-target="#delete_user">
+    //                             <i class="fe fe-trash-2"></i>
+    //                         </a>
+    //                     </div>
+    //                 </td>
+    //             ';
+    //             if ($record->status == 'Active') {
+    //                 $status = '<span class="badge badge-success">' . $record->status . '</span>';
+    //             } else {
+    //                 $status = '<span class="badge badge-danger">' . $record->status . '</span>';
+    //             }
 
-//             $profile = '
-//                 <h2 class="table-avatar">
-//                     <a class="avatar avatar-sm me-2">
-//                         <img class="avatar-img rounded-circle" src="' . url('images/' . $record->avatar) . '" alt="User Image">
-//                     </a>
-//                     <a>' . $record->name . '</a>
-//                 </h2>
-//             ';
+    //             $profile = '
+    //                 <h2 class="table-avatar">
+    //                     <a class="avatar avatar-sm me-2">
+    //                         <img class="avatar-img rounded-circle" src="' . url('images/' . $record->avatar) . '" alt="User Image">
+    //                     </a>
+    //                     <a>' . $record->name . '</a>
+    //                 </h2>
+    //             ';
 
-//             $data_arr[] = [
-//                 'user_id'      => $record->user_id,
-//                 'name'         => $profile,
-//                 'email'        => $record->email,
-//                 'position'     => $record->position,
-//                 'phone_number' => $record->phone_number,
-//                 'join_date'    => $record->join_date,
-//                 'type'         => $record->type,
-//                 'status'       => $status,
-//                 'modify'       => $modify,
-//             ];
-//         }
+    //             $data_arr[] = [
+    //                 'user_id'      => $record->user_id,
+    //                 'name'         => $profile,
+    //                 'email'        => $record->email,
+    //                 'position'     => $record->position,
+    //                 'phone_number' => $record->phone_number,
+    //                 'join_date'    => $record->join_date,
+    //                 'type'         => $record->type,
+    //                 'status'       => $status,
+    //                 'modify'       => $modify,
+    //             ];
+    //         }
 
-//         return response()->json([
-//             'draw'                 => intval($draw),
-//             'iTotalRecords'        => $totalRecords,
-//             'iTotalDisplayRecords' => $totalRecordsWithFilter,
-//             'aaData'               => $data_arr,
-//         ]);
-//     }
+    //         return response()->json([
+    //             'draw'                 => intval($draw),
+    //             'iTotalRecords'        => $totalRecords,
+    //             'iTotalDisplayRecords' => $totalRecordsWithFilter,
+    //             'aaData'               => $data_arr,
+    //         ]);
+    //     }
 }

@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Result;
-use App\Models\StudentProfile;
 use App\Models\AcademicSession;
 use App\Models\Attendance;
+use App\Models\Result;
+use App\Models\StudentProfile;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class ParentController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class);
+    }
+
     /**
      * Parent dashboard — overview of linked children.
      */

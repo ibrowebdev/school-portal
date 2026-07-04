@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class SubjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Subject::class, 'id');
+    }
+
     /** index page */
     public function index()
     {
@@ -61,7 +66,7 @@ class SubjectController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'code' => ['nullable', 'string', 'max:10', 'unique:subjects,code,' . $subject->id],
+            'code' => ['nullable', 'string', 'max:10', 'unique:subjects,code,'.$subject->id],
             'description' => ['nullable', 'string', 'max:500'],
         ]);
 

@@ -24,7 +24,7 @@ class SettingController extends Controller
             'zip_code' => Setting::get('zip_code', ''),
             'country' => Setting::get('country', ''),
         ];
-        
+
         return view('setting.settings', compact('settings'));
     }
 

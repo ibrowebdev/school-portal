@@ -36,7 +36,7 @@ return [
     ],
     'cloudinary' => [
         'url' => env('CLOUDINARY_URL'),
-        'base_folder' => env('CLOUDINARY_BASE_FOLDER', 'school-portal')
-    ]
+        'base_folder' => env('CLOUDINARY_BASE_FOLDER', 'school-portal'),
+    ],
 
 ];

@@ -7,13 +7,17 @@ use App\Http\Requests\UpdateTeacherRequest;
 use App\Models\TeacherProfile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class TeacherController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'id');
+    }
+
     /** index page */
     public function index()
     {
@@ -52,7 +56,7 @@ class TeacherController extends Controller
             // Handle avatar upload
             $avatarPath = 'photo_defaults.jpg';
             if ($request->hasFile('avatar')) {
-                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
                 $request->file('avatar')->move(public_path('images'), $filename);
                 $avatarPath = $filename;
             }
@@ -119,10 +123,10 @@ class TeacherController extends Controller
         try {
             // Handle avatar upload
             if ($request->hasFile('avatar')) {
-                if ($teacher->avatar !== 'photo_defaults.jpg' && ! empty($teacher->avatar) && file_exists(public_path('images/' . $teacher->avatar))) {
-                    unlink(public_path('images/' . $teacher->avatar));
+                if ($teacher->avatar !== 'photo_defaults.jpg' && ! empty($teacher->avatar) && file_exists(public_path('images/'.$teacher->avatar))) {
+                    unlink(public_path('images/'.$teacher->avatar));
                 }
-                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
                 $request->file('avatar')->move(public_path('images'), $filename);
                 $teacher->avatar = $filename;
             }

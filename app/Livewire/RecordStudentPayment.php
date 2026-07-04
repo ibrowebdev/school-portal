@@ -2,35 +2,46 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\User;
 use App\Models\AcademicSession;
-use App\Models\Term;
 use App\Models\ClassFee;
 use App\Models\StudentPayment;
+use App\Models\Term;
+use App\Models\User;
+use Livewire\Component;
 
 class RecordStudentPayment extends Component
 {
     public $sessions = [];
+
     public $terms = [];
-    
+
     public $selectedSession = null;
+
     public $selectedTerm = null;
 
     public $searchStudent = '';
+
     public $students = [];
+
     public $selectedStudent = null;
 
     public $totalBilled = 0;
+
     public $totalPaid = 0;
+
     public $outstanding = 0;
+
     public $billables = [];
+
     public $paymentHistory = [];
 
     // Payment Form
     public $payAmount = '';
+
     public $payMethod = 'Cash';
+
     public $payReference = '';
+
     public $payDate = '';
 
     public function mount()
@@ -40,18 +51,29 @@ class RecordStudentPayment extends Component
         $this->payDate = now()->format('Y-m-d');
     }
 
-    public function updatedSelectedSession() { $this->calculateFinancials(); }
-    public function updatedSelectedTerm() { $this->calculateFinancials(); }
-    public function updatedSearchStudent() { $this->searchStudents(); }
+    public function updatedSelectedSession()
+    {
+        $this->calculateFinancials();
+    }
+
+    public function updatedSelectedTerm()
+    {
+        $this->calculateFinancials();
+    }
+
+    public function updatedSearchStudent()
+    {
+        $this->searchStudents();
+    }
 
     public function searchStudents()
     {
-        if (!empty($this->searchStudent)) {
+        if (! empty($this->searchStudent)) {
             $this->students = User::where('type', User::STUDENT)
-                ->where(function($q) {
-                    $q->where('first_name', 'like', '%' . $this->searchStudent . '%')
-                      ->orWhere('last_name', 'like', '%' . $this->searchStudent . '%')
-                      ->orWhere('email', 'like', '%' . $this->searchStudent . '%');
+                ->where(function ($q) {
+                    $q->where('first_name', 'like', '%'.$this->searchStudent.'%')
+                        ->orWhere('last_name', 'like', '%'.$this->searchStudent.'%')
+                        ->orWhere('email', 'like', '%'.$this->searchStudent.'%');
                 })
                 ->take(10)
                 ->get();
@@ -92,7 +114,7 @@ class RecordStudentPayment extends Component
                 ->where('term_id', $this->selectedTerm)
                 ->orderBy('created_at', 'desc')
                 ->get();
-                
+
             $this->totalPaid = $this->paymentHistory->sum('amount_paid');
             $this->outstanding = $this->totalBilled - $this->totalPaid;
         }

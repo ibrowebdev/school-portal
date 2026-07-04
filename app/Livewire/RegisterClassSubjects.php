@@ -11,14 +11,19 @@ use Livewire\Component;
 class RegisterClassSubjects extends Component
 {
     public $sessions = [];
+
     public $terms = [];
+
     public $classes = [];
+
     public $subjects = [];
 
     public $selectedSessionId;
+
     public $selectedTermId;
+
     public $selectedClassId;
-    
+
     public $selectedSubjectIds = [];
 
     public function mount()
@@ -63,7 +68,7 @@ class RegisterClassSubjects extends Component
     {
         if ($this->selectedSessionId && $this->selectedTermId && $this->selectedClassId) {
             $class = SchoolClass::find($this->selectedClassId);
-            
+
             if ($class) {
                 // Get the subjects specifically mapped to this session and term
                 $mappedSubjectIds = $class->subjects()
@@ -110,7 +115,7 @@ class RegisterClassSubjects extends Component
             }
         }
 
-        if (!empty($syncData)) {
+        if (! empty($syncData)) {
             $class->subjects()->syncWithoutDetaching($syncData);
         }
 

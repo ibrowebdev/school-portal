@@ -7,6 +7,7 @@ use App\Models\AcademicSession;
 use App\Models\ClassSection;
 use App\Models\SchoolClass;
 use App\Models\StudentProfile;
+use App\Models\Subject;
 use App\Models\TeacherProfile;
 use App\Models\Term;
 use App\Models\User;
@@ -77,7 +78,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // ─── 6. Map subjects to classes ─────────────────────────
-        $allSubjects = \App\Models\Subject::all();
+        $allSubjects = Subject::all();
         $allClasses = SchoolClass::all();
         $firstTerm = Term::where('name', 'First Term')->first();
 
@@ -86,6 +87,7 @@ class DatabaseSeeder extends Seeder
             foreach ($subjectIds as $id) {
                 $data[$id] = ['academic_session_id' => $session->id, 'term_id' => $firstTerm->id];
             }
+
             return $data;
         };
 
@@ -197,9 +199,9 @@ class DatabaseSeeder extends Seeder
             TeacherProfile::firstOrCreate(
                 ['user_id' => $teacherUser->id],
                 [
-                    'employee_id' => 'TCH-' . str_pad($i + 2, 3, '0', STR_PAD_LEFT),
-                    'qualification' => 'B.Sc ' . fake()->word(),
-                    'experience' => fake()->numberBetween(1, 10) . ' years',
+                    'employee_id' => 'TCH-'.str_pad($i + 2, 3, '0', STR_PAD_LEFT),
+                    'qualification' => 'B.Sc '.fake()->word(),
+                    'experience' => fake()->numberBetween(1, 10).' years',
                     'address' => fake()->address(),
                     'city' => fake()->city(),
                     'state' => 'Lagos',
@@ -249,12 +251,12 @@ class DatabaseSeeder extends Seeder
         );
 
         // Dynamic Parents and Students
-        // Requirement: All classes must have at least 10 students. 
+        // Requirement: All classes must have at least 10 students.
         // We have 6 classes -> 60 new students.
         // A parent will have a minimum of 1 student and a max of 2.
         $allClassModels = SchoolClass::with('sections')->get();
         $admissionCounter = 2; // start from 2
-        
+
         $currentParent = null;
         $currentParentChildrenCount = 0;
         $targetChildrenForCurrentParent = 0;
@@ -265,9 +267,9 @@ class DatabaseSeeder extends Seeder
 
             foreach ($sections as $section) {
                 for ($i = 0; $i < $studentsPerSection; $i++) {
-                    
+
                     // Do we need a new parent?
-                    if (!$currentParent || $currentParentChildrenCount >= $targetChildrenForCurrentParent) {
+                    if (! $currentParent || $currentParentChildrenCount >= $targetChildrenForCurrentParent) {
                         $currentParent = User::factory()->create([
                             'type' => User::PARENT,
                             'status' => StatusEnum::ACTIVE->value,
@@ -287,7 +289,7 @@ class DatabaseSeeder extends Seeder
                     StudentProfile::firstOrCreate(
                         ['user_id' => $newStudent->id],
                         [
-                            'admission_id' => 'ADM-2025-' . str_pad($admissionCounter, 3, '0', STR_PAD_LEFT),
+                            'admission_id' => 'ADM-2025-'.str_pad($admissionCounter, 3, '0', STR_PAD_LEFT),
                             'roll_number' => str_pad($i + 2, 3, '0', STR_PAD_LEFT), // Avoid colliding with hardcoded roll 001
                             'school_class_id' => $schoolClass->id,
                             'class_section_id' => $section->id,

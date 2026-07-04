@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class AcademicSessionController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(AcademicSession::class);
+    }
+
     public function index()
     {
         $sessions = AcademicSession::withCount('terms')
@@ -58,7 +63,7 @@ class AcademicSessionController extends Controller
     public function update(Request $request, AcademicSession $academicSession): JsonResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:50', 'unique:academic_sessions,name,' . $academicSession->id],
+            'name' => ['required', 'string', 'max:50', 'unique:academic_sessions,name,'.$academicSession->id],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
             'is_current' => ['nullable', 'boolean'],

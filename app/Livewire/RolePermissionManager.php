@@ -2,10 +2,10 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Models\User;
+use Livewire\Component;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionManager extends Component
 {
@@ -13,9 +13,13 @@ class RolePermissionManager extends Component
 
     // Roles state
     public $roles = [];
+
     public $permissions = [];
+
     public $selectedRole = null;
+
     public $rolePermissions = [];
+
     public $newRoleName = '';
 
     // Permissions state
@@ -23,9 +27,13 @@ class RolePermissionManager extends Component
 
     // Users state
     public $searchUser = '';
+
     public $users = [];
+
     public $selectedUser = null;
+
     public $userRoles = [];
+
     public $userPermissions = [];
 
     public function mount()
@@ -94,10 +102,10 @@ class RolePermissionManager extends Component
 
     public function searchUsers()
     {
-        if (!empty($this->searchUser)) {
-            $this->users = User::where('first_name', 'like', '%' . $this->searchUser . '%')
-                ->orWhere('last_name', 'like', '%' . $this->searchUser . '%')
-                ->orWhere('email', 'like', '%' . $this->searchUser . '%')
+        if (! empty($this->searchUser)) {
+            $this->users = User::where('first_name', 'like', '%'.$this->searchUser.'%')
+                ->orWhere('last_name', 'like', '%'.$this->searchUser.'%')
+                ->orWhere('email', 'like', '%'.$this->searchUser.'%')
                 ->take(10)
                 ->get();
         } else {
@@ -124,15 +132,16 @@ class RolePermissionManager extends Component
     {
         if ($this->selectedUser) {
             // Check if Super Admin is being removed from self
-            if ($this->selectedUser->id === auth()->id() && !in_array(User::SUPER_ADMIN, $this->userRoles)) {
+            if ($this->selectedUser->id === auth()->id() && ! in_array(User::SUPER_ADMIN, $this->userRoles)) {
                 // Ensure auth user cannot remove super-admin from themselves
                 session()->flash('user_error', 'You cannot remove Super Admin from yourself.');
+
                 return;
             }
 
             // Sync roles and update user 'type'
             $this->selectedUser->syncRoles($this->userRoles);
-            
+
             // Auto update type if possible
             if (count($this->userRoles) > 0) {
                 $this->selectedUser->update(['type' => $this->userRoles[0]]);
@@ -142,7 +151,7 @@ class RolePermissionManager extends Component
             $this->selectedUser->syncPermissions($this->userPermissions);
 
             session()->flash('user_message', 'User roles and permissions synchronized.');
-            
+
             // Re-fetch roles in case we need updated view
             $this->selectUser($this->selectedUser->id);
         }

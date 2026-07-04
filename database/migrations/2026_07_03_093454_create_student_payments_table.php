@@ -13,15 +13,15 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('academic_session_id')->constrained()->cascadeOnDelete();
             $table->foreignId('term_id')->constrained()->cascadeOnDelete();
-            
+
             $table->decimal('amount_paid', 10, 2);
             $table->date('payment_date');
             $table->string('payment_method')->nullable();
             $table->string('reference_number')->nullable();
-            
+
             // Optional: User who recorded the payment
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
-            
+
             $table->timestamps();
         });
     }

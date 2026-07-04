@@ -11,12 +11,10 @@ trait HasMediaTrait
      * Upload a file to Cloudinary and return the public ID.
      *
      * @param  UploadedFile|string  $file
-     * @param  string  $folder
-     * @return string|null
      */
     public function uploadMedia($file, string $folder = 'media'): ?string
     {
-        if (!$file) {
+        if (! $file) {
             return null;
         }
 
@@ -34,13 +32,10 @@ trait HasMediaTrait
 
     /**
      * Get the full Cloudinary secure URL based on the public ID.
-     *
-     * @param  string|null  $publicId
-     * @return string|null
      */
     public function getMedia(?string $publicId): ?string
     {
-        if (!$publicId) {
+        if (! $publicId) {
             return null;
         }
 

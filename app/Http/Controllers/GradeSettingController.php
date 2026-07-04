@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Log;
 
 class GradeSettingController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(GradeSetting::class);
+    }
+
     public function index()
     {
         $gradeSettings = GradeSetting::orderByDesc('min_score')->get();

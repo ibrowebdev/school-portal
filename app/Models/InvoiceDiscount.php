@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class InvoiceDiscount extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'invoice_id',
         'offer_new',
     ];
-    
 }

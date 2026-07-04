@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Log;
 
 class TermController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Term::class);
+    }
+
     public function index(AcademicSession $academicSession)
     {
         $terms = $academicSession->terms()->orderBy('start_date')->get();

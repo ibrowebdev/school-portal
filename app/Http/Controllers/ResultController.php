@@ -6,17 +6,22 @@ use App\Http\Requests\StoreResultRequest;
 use App\Models\AcademicSession;
 use App\Models\Result;
 use App\Models\SchoolClass;
-use App\Models\StudentProfile;
-use App\Models\Subject;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Mpdf\Mpdf;
+use Mpdf\Output\Destination;
 
 class ResultController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Result::class);
+    }
+
     /**
      * View results with filters.
      */
@@ -198,15 +203,15 @@ class ResultController extends Controller
 
         $html = view('results.report-card-pdf', compact('student', 'results', 'session', 'term'))->render();
 
-        $mpdf = new \Mpdf\Mpdf([
+        $mpdf = new Mpdf([
             'margin_top' => 10,
             'margin_bottom' => 10,
         ]);
         $mpdf->WriteHTML($html);
 
         return $mpdf->Output(
-            'Report_Card_' . $student->name . '_' . ($term?->name ?? '') . '.pdf',
-            \Mpdf\Output\Destination::INLINE
+            'Report_Card_'.$student->name.'_'.($term?->name ?? '').'.pdf',
+            Destination::INLINE
         );
     }
 

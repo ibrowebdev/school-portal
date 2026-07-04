@@ -33,12 +33,12 @@ class AccountsController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'student_id'   => ['required', 'string'],
+            'student_id' => ['required', 'string'],
             'student_name' => ['required', 'string'],
-            'gender'       => ['required', 'string'],
-            'fees_type'    => ['required', 'string'],
-            'fees_amount'  => ['required', 'string'],
-            'paid_date'    => ['required', 'string'],
+            'gender' => ['required', 'string'],
+            'fees_type' => ['required', 'string'],
+            'fees_amount' => ['required', 'string'],
+            'paid_date' => ['required', 'string'],
         ]);
 
         $feeData = $validated;

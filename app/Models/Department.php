@@ -34,7 +34,7 @@ class Department extends Model
             if (empty($model->department_id)) {
                 $latest = static::orderByDesc('department_id')->value('department_id');
                 $nextID = $latest ? intval(substr($latest, 5)) + 1 : 1;
-                $model->department_id = 'PRE_' . sprintf('%05d', $nextID);
+                $model->department_id = 'PRE_'.sprintf('%05d', $nextID);
             }
         });
     }

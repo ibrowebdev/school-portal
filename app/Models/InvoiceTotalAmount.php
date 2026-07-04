@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class InvoiceTotalAmount extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'invoice_id',
         'taxable_amount',

@@ -6,9 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rules\Password;
 use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
@@ -58,7 +56,7 @@ class RegisterController extends Controller
                 'redirect' => route('login'),
             ]);
         } catch (\Exception $e) {
-            Log::error('User registration failed: ' . $e->getMessage());
+            Log::error('User registration failed: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Failed to create account. Please try again.',

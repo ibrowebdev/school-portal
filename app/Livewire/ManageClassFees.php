@@ -2,22 +2,27 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use App\Models\SchoolClass;
 use App\Models\AcademicSession;
-use App\Models\Term;
-use App\Models\FeesType;
 use App\Models\ClassFee;
+use App\Models\FeesType;
+use App\Models\SchoolClass;
+use App\Models\Term;
+use Livewire\Component;
 
 class ManageClassFees extends Component
 {
     public $classes = [];
+
     public $sessions = [];
+
     public $terms = [];
+
     public $feesTypes = [];
 
     public $selectedClass = null;
+
     public $selectedSession = null;
+
     public $selectedTerm = null;
 
     public $classFees = [];
@@ -27,6 +32,7 @@ class ManageClassFees extends Component
 
     // New Class Fee state
     public $addFeeTypeId = '';
+
     public $addAmount = '';
 
     public function mount()
@@ -67,9 +73,20 @@ class ManageClassFees extends Component
         }
     }
 
-    public function updatedSelectedClass() { $this->loadClassFees(); }
-    public function updatedSelectedSession() { $this->loadClassFees(); }
-    public function updatedSelectedTerm() { $this->loadClassFees(); }
+    public function updatedSelectedClass()
+    {
+        $this->loadClassFees();
+    }
+
+    public function updatedSelectedSession()
+    {
+        $this->loadClassFees();
+    }
+
+    public function updatedSelectedTerm()
+    {
+        $this->loadClassFees();
+    }
 
     public function addClassFee()
     {
@@ -90,6 +107,7 @@ class ManageClassFees extends Component
 
         if ($exists) {
             session()->flash('fee_error', 'This fee type is already added to this class for the selected term.');
+
             return;
         }
 

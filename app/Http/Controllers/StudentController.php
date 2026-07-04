@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
-use App\Models\ClassSection;
 use App\Models\SchoolClass;
 use App\Models\StudentProfile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'id');
+    }
+
     /** index page student list */
     public function index()
     {
@@ -57,9 +60,9 @@ class StudentController extends Controller
             // Handle avatar upload
             $avatarPath = 'photo_defaults.jpg';
             if ($request->hasFile('avatar')) {
-                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
                 $request->file('avatar')->move(public_path('student-photos'), $filename);
-                $avatarPath = 'student-photos/' . $filename;
+                $avatarPath = 'student-photos/'.$filename;
             }
 
             // Create the user record
@@ -129,9 +132,9 @@ class StudentController extends Controller
                 if ($student->avatar !== 'photo_defaults.jpg' && ! empty($student->avatar) && file_exists(public_path($student->avatar))) {
                     unlink(public_path($student->avatar));
                 }
-                $filename = time() . '_' . $request->file('avatar')->getClientOriginalName();
+                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
                 $request->file('avatar')->move(public_path('student-photos'), $filename);
-                $student->avatar = 'student-photos/' . $filename;
+                $student->avatar = 'student-photos/'.$filename;
             }
 
             // Update user record

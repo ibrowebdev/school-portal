@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\AcademicSession;
 use App\Models\Attendance;
 use App\Models\SchoolClass;
-use App\Models\StudentProfile;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -15,6 +14,11 @@ use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Attendance::class);
+    }
+
     /**
      * Show attendance marking form.
      */
