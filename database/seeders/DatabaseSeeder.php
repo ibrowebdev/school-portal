@@ -79,39 +79,52 @@ class DatabaseSeeder extends Seeder
         // ─── 6. Map subjects to classes ─────────────────────────
         $allSubjects = \App\Models\Subject::all();
         $allClasses = SchoolClass::all();
+        $firstTerm = Term::where('name', 'First Term')->first();
+
+        $buildSyncData = function ($subjectIds) use ($session, $firstTerm) {
+            $data = [];
+            foreach ($subjectIds as $id) {
+                $data[$id] = ['academic_session_id' => $session->id, 'term_id' => $firstTerm->id];
+            }
+            return $data;
+        };
 
         // Map core subjects (MTH, ENG, CVE) to all classes
         $coreSubjectCodes = ['MTH', 'ENG', 'CVE'];
         $coreSubjects = $allSubjects->whereIn('code', $coreSubjectCodes);
+        $coreSyncData = $buildSyncData($coreSubjects->pluck('id'));
 
         foreach ($allClasses as $class) {
-            $class->subjects()->syncWithoutDetaching($coreSubjects->pluck('id'));
+            $class->subjects()->syncWithoutDetaching($coreSyncData);
         }
 
         // Map science subjects to SS classes
         $scienceSubjectCodes = ['PHY', 'CHM', 'BIO', 'FMT'];
         $scienceSubjects = $allSubjects->whereIn('code', $scienceSubjectCodes);
+        $scienceSyncData = $buildSyncData($scienceSubjects->pluck('id'));
         $seniorClasses = $allClasses->where('level', 'senior');
 
         foreach ($seniorClasses as $class) {
-            $class->subjects()->syncWithoutDetaching($scienceSubjects->pluck('id'));
+            $class->subjects()->syncWithoutDetaching($scienceSyncData);
         }
 
         // Map arts subjects to SS classes
         $artsSubjectCodes = ['LIT', 'GOV', 'ECO', 'HIS', 'GEO'];
         $artsSubjects = $allSubjects->whereIn('code', $artsSubjectCodes);
+        $artsSyncData = $buildSyncData($artsSubjects->pluck('id'));
 
         foreach ($seniorClasses as $class) {
-            $class->subjects()->syncWithoutDetaching($artsSubjects->pluck('id'));
+            $class->subjects()->syncWithoutDetaching($artsSyncData);
         }
 
         // Map general subjects to JSS classes
         $jssSubjectCodes = ['BIO', 'PHY', 'CHM', 'AGR', 'CSC', 'HIS', 'GEO', 'CRS', 'FRN'];
         $jssSubjects = $allSubjects->whereIn('code', $jssSubjectCodes);
+        $jssSyncData = $buildSyncData($jssSubjects->pluck('id'));
         $juniorClasses = $allClasses->where('level', 'junior');
 
         foreach ($juniorClasses as $class) {
-            $class->subjects()->syncWithoutDetaching($jssSubjects->pluck('id'));
+            $class->subjects()->syncWithoutDetaching($jssSyncData);
         }
 
         // ─── 7. Users ───────────────────────────────────────────

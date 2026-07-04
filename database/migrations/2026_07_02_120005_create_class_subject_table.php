@@ -12,9 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('school_class_id')->constrained()->cascadeOnDelete();
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('academic_session_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('term_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['school_class_id', 'subject_id']);
+            $table->unique(['school_class_id', 'subject_id', 'academic_session_id', 'term_id'], 'class_subj_session_term_unique');
         });
     }
 

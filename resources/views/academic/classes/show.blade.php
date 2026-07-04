@@ -7,29 +7,6 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {{-- Map Subjects --}}
-        <x-card title="Map Subjects">
-            <form action="{{ route('school-classes.map-subjects', $schoolClass) }}" method="POST" class="x-submit">
-                @csrf
-                <div class="max-h-96 overflow-y-auto pr-2 border rounded-lg border-gray-200 p-4 mb-4 bg-gray-50">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        @foreach(App\Models\Subject::orderBy('name')->get() as $subject)
-                            <label class="flex items-start gap-2 p-2 bg-white rounded shadow-sm border border-gray-100 cursor-pointer hover:border-blue-300 transition">
-                                <input type="checkbox" name="subject_ids[]" value="{{ $subject->id }}"
-                                    class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                    {{ $schoolClass->subjects->contains($subject->id) ? 'checked' : '' }}>
-                                <div>
-                                    <div class="text-sm font-medium text-gray-800">{{ $subject->name }}</div>
-                                    <div class="text-xs text-gray-500">{{ $subject->code }}</div>
-                                </div>
-                            </label>
-                        @endforeach
-                    </div>
-                </div>
-                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">Save Subjects Mapping</button>
-            </form>
-        </x-card>
-
         {{-- Assign Teachers --}}
         <x-card title="Assign Teachers">
             @php $currentSession = App\Models\AcademicSession::current()->first(); @endphp
@@ -120,6 +97,55 @@
             @else
                 <div class="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200">
                     <i class="fas fa-exclamation-triangle mr-2"></i> Please create and activate an Academic Session first.
+                </div>
+            @endif
+        </x-card>
+
+        {{-- Registered Subjects --}}
+        <x-card title="Registered Subjects (Current Session & Term)">
+            @php 
+                $currentSession = App\Models\AcademicSession::current()->first();
+                $currentTerm = App\Models\Term::current()->first();
+                $registeredSubjects = collect();
+
+                if ($currentSession && $currentTerm) {
+                    $registeredSubjects = $schoolClass->subjects()
+                        ->wherePivot('academic_session_id', $currentSession->id)
+                        ->wherePivot('term_id', $currentTerm->id)
+                        ->orderBy('name')
+                        ->get();
+                }
+            @endphp
+
+            @if($currentSession && $currentTerm)
+                <div class="mb-4 p-3 bg-blue-50 text-blue-700 rounded-lg text-sm flex items-center gap-2">
+                    <i class="fas fa-info-circle"></i> Showing subjects for: <strong>{{ $currentSession->name }} - {{ $currentTerm->name }}</strong>
+                </div>
+
+                @if($registeredSubjects->isNotEmpty())
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
+                        @foreach($registeredSubjects as $subject)
+                            <div class="flex items-start gap-3 p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+                                <div class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-800">{{ $subject->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $subject->code ?? 'No Code' }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="p-6 text-center text-gray-500 border border-dashed border-gray-200 rounded-lg">
+                        <i class="fas fa-folder-open text-3xl mb-3 text-gray-300"></i>
+                        <p>No subjects registered for this class in the current term.</p>
+                        <a href="{{ route('subjects.register') }}" class="mt-3 inline-block px-4 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition text-sm font-medium">Register Subjects</a>
+                    </div>
+                @endif
+            @else
+                <div class="p-4 bg-yellow-50 text-yellow-800 rounded-lg border border-yellow-200">
+                    <i class="fas fa-exclamation-triangle mr-2"></i> Please ensure there is an active Academic Session and Term.
                 </div>
             @endif
         </x-card>

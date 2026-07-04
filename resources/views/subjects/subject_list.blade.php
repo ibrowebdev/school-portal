@@ -49,7 +49,7 @@
                         </th>
                         <th class="px-6 py-4">ID</th>
                         <th class="px-6 py-4">Name</th>
-                        <th class="px-6 py-4">Class</th>
+                        <th class="px-6 py-4">Code</th>
                         <th class="px-6 py-4 text-right">Action</th>
                     </tr>
                 </thead>
@@ -59,11 +59,11 @@
                             <td class="px-6 py-4">
                                 <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             </td>
-                            <td class="px-6 py-4 text-gray-500 font-medium subject_id">{{ $value->subject_id }}</td>
+                            <td class="px-6 py-4 text-gray-500 font-medium subject_id">SUB-{{ str_pad($value->id, 3, '0', STR_PAD_LEFT) }}</td>
                             <td class="px-6 py-4 font-medium text-gray-800">
                                 <a>{{ $value->name }}</a>
                             </td>
-                            <td class="px-6 py-4 text-gray-600">{{ $value->class }}</td>
+                            <td class="px-6 py-4 text-gray-600 font-medium">{{ $value->code ?? 'N/A' }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ url('subject/edit/'.$value->id) }}" class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">

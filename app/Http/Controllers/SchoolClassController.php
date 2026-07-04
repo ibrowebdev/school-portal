@@ -114,26 +114,7 @@ class SchoolClassController extends Controller
         }
     }
 
-    /**
-     * Map subjects to a class (sync pivot).
-     */
-    public function mapSubjects(Request $request, SchoolClass $schoolClass): JsonResponse
-    {
-        $validated = $request->validate([
-            'subject_ids' => ['required', 'array'],
-            'subject_ids.*' => ['exists:subjects,id'],
-        ]);
 
-        try {
-            $schoolClass->subjects()->sync($validated['subject_ids']);
-
-            return response()->json(['message' => 'Subjects mapped to class successfully!']);
-        } catch (\Exception $e) {
-            Log::error('Failed to map subjects', ['error' => $e->getMessage()]);
-
-            return response()->json(['message' => 'Failed to map subjects.'], 500);
-        }
-    }
 
     /**
      * Assign teachers to a class (sync pivot).

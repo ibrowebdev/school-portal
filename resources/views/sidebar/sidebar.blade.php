@@ -73,15 +73,18 @@
                 @endhasanyrole
 
                 <!-- Subjects -->
-                @hasanyrole('super-admin|admin')
+                @hasanyrole('super-admin|admin|teacher')
                 <li class="submenu group {{ request()->routeIs('subjects.*') ? 'active' : '' }}">
                     <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('subjects.*') ? 'text-blue-600 bg-blue-50' : '' }}">
                         <div class="flex items-center gap-3"><i class="fas fa-book-reader text-lg w-5 text-center"></i> <span>Subjects</span></div>
                         <span class="menu-arrow fas fa-chevron-right text-xs transition-transform duration-200 group-[.active]:rotate-90"></span>
                     </a>
                     <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
+                        @hasanyrole('super-admin|admin')
                         <li><a href="{{ route('subjects.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('subjects.index') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Subject List</a></li>
                         <li><a href="{{ route('subjects.create') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('subjects.create') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Subject Add</a></li>
+                        @endhasanyrole
+                        <li><a href="{{ route('subjects.register') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('subjects.register') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Register Subjects</a></li>
                     </ul>
                 </li>
                 @endhasanyrole

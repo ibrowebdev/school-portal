@@ -12,9 +12,9 @@
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <x-form.input name="subject_name" label="Subject Name" required="true" placeholder="Enter Subject Name" />
+                <x-form.input name="name" label="Subject Name" required="true" placeholder="Enter Subject Name" />
                 
-                <x-form.input name="class" label="Class" required="true" placeholder="Enter Class" />
+                <x-form.input name="code" label="Subject Code" placeholder="e.g. MTH" />
             </div>
             
             <div class="mt-8 flex justify-end">

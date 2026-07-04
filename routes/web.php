@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('departments', DepartmentController::class)->parameters(['departments' => 'id']);
 
         // 6. SUBJECTS
+        Route::get('subjects/register', function() { return view('academic.subjects.register'); })->name('subjects.register');
         Route::resource('subjects', SubjectController::class)->parameters(['subjects' => 'id']);
 
         // 7. INVOICES
@@ -111,8 +112,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('academic-sessions.terms', TermController::class)->shallow();
 
         // 10. SCHOOL CLASSES
-        Route::post('school-classes/{schoolClass}/map-subjects', [SchoolClassController::class, 'mapSubjects'])
-            ->name('school-classes.map-subjects');
         Route::post('school-classes/{schoolClass}/assign-teachers', [SchoolClassController::class, 'assignTeachers'])
             ->name('school-classes.assign-teachers');
         Route::resource('school-classes', SchoolClassController::class);
