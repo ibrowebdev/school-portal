@@ -69,30 +69,28 @@ class AttendanceController extends Controller
             'attendance.*.remark' => ['nullable', 'string', 'max:255'],
         ]);
 
-        DB::beginTransaction();
         try {
-            foreach ($validated['attendance'] as $record) {
-                Attendance::updateOrCreate(
-                    [
-                        'student_id' => $record['student_id'],
-                        'date' => $validated['date'],
-                    ],
-                    [
-                        'school_class_id' => $validated['school_class_id'],
-                        'academic_session_id' => $validated['academic_session_id'],
-                        'term_id' => $validated['term_id'],
-                        'status' => $record['status'],
-                        'remark' => $record['remark'] ?? null,
-                        'marked_by' => auth()->id(),
-                    ]
-                );
-            }
-
-            DB::commit();
+            DB::transaction(function () use ($validated) {
+                foreach ($validated['attendance'] as $record) {
+                    Attendance::updateOrCreate(
+                        [
+                            'student_id' => $record['student_id'],
+                            'date' => $validated['date'],
+                        ],
+                        [
+                            'school_class_id' => $validated['school_class_id'],
+                            'academic_session_id' => $validated['academic_session_id'],
+                            'term_id' => $validated['term_id'],
+                            'status' => $record['status'],
+                            'remark' => $record['remark'] ?? null,
+                            'marked_by' => auth()->id(),
+                        ]
+                    );
+                }
+            });
 
             return response()->json(['message' => 'Attendance saved successfully!']);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to save attendance', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to save attendance.'], 500);

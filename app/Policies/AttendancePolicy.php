@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Attendance;
+use App\Models\StudentProfile;
 use App\Models\User;
 
 class AttendancePolicy
@@ -12,7 +13,7 @@ class AttendancePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-attendance');
+        return $user->can('view-attendance') || $user->hasRole('parent');
     }
 
     /**
@@ -20,7 +21,17 @@ class AttendancePolicy
      */
     public function view(User $user, Attendance $attendance): bool
     {
-        return $user->can('view-attendance');
+        if ($user->can('view-attendance')) {
+            return true;
+        }
+
+        if ($user->hasRole('parent')) {
+            return StudentProfile::where('user_id', $attendance->student_id)
+                ->where('parent_id', $user->id)
+                ->exists();
+        }
+
+        return false;
     }
 
     /**
