@@ -115,9 +115,9 @@
                         @can('upload-results')
                         <li><a href="{{ route('results.upload') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('results.upload') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Upload Results</a></li>
                         @endcan
-                        @hasrole('Super Admin|Admin')
+                        @hasanyrole('super-admin|admin')
                         <li><a href="{{ route('grade-settings.index') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('grade-settings.*') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Grade Settings</a></li>
-                        @endhasrole
+                        @endhasanyrole
                     </ul>
                 </li>
                 @endcan

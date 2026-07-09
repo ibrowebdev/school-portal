@@ -81,15 +81,15 @@ document.addEventListener("submit", function (e) {
                     if (response.data.redirect) {
                         setTimeout(() => {
                             window.location.href = response.data.redirect;
-                        }, 2000);
+                        }, 1000);
                     } else if (dataThen && dataThen.trim() === "reload") {
                         setTimeout(() => {
                             window.location.reload();
-                        }, 2000);
+                        }, 1000);
                     }else if(dataThen && dataThen.startsWith("redirect:")) {
                         setTimeout(() => {
                             window.location.href = dataThen.replace("redirect:", "");
-                        }, 2000);
+                        }, 1000);
                     } 
                     else {
                         form.reset();
