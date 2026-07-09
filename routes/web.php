@@ -55,8 +55,8 @@ Route::middleware('auth')->group(function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/home', 'index')->name('home');
         Route::get('user/profile/page', 'userProfile')->name('user/profile/page');
-        Route::get('teacher/dashboard', 'teacherDashboardIndex')->name('teacher/dashboard');
-        Route::get('student/dashboard', 'studentDashboardIndex')->name('student/dashboard');
+        Route::get('teacher/dashboard', 'teacherDashboardIndex')->name('teacher.dashboard');
+        Route::get('student/dashboard', 'studentDashboardIndex')->name('student.dashboard');
     });
 
     // ─── SUPER-ADMIN ONLY ROUTES ────────────────────────────────

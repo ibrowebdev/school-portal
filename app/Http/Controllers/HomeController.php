@@ -31,11 +31,11 @@ class HomeController extends Controller
 
         // Redirect based on user type
         if ($user->isStudent()) {
-            return redirect()->route('student/dashboard');
+            return redirect()->route('student.dashboard');
         }
 
         if ($user->isTeacher()) {
-            return redirect()->route('teacher/dashboard');
+            return redirect()->route('teacher.dashboard');
         }
 
         if ($user->isParent()) {

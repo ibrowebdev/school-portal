@@ -7,20 +7,20 @@
                 </li>
 
                 <!-- Dashboard -->
-                <li class="submenu group {{ request()->routeIs('home', 'teacher/dashboard', 'student/dashboard', 'parent.dashboard') ? 'active' : '' }}">
+                <li class="submenu group {{ request()->routeIs('home', 'teacher.dashboard', 'student.dashboard', 'parent.dashboard') ? 'active' : '' }}">
                     <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('home', 'teacher/dashboard', 'student/dashboard', 'parent.dashboard') ? 'text-blue-600 bg-blue-50' : '' }}">
                         <div class="flex items-center gap-3"><i class="feather-grid text-lg w-5 text-center"></i> <span>Dashboard</span></div>
                         <span class="menu-arrow fas fa-chevron-right text-xs transition-transform duration-200 group-[.active]:rotate-90"></span>
                     </a>
                     <ul class="mt-1 space-y-1 pl-9 hidden group-[.active]:block">
-                        @hasrole('Super Admin|Admin')
+                        @hasanyrole('super-admin|admin')
                         <li><a href="{{ route('home') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('home') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Admin Dashboard</a></li>
-                        @endhasrole
+                        @endhasanyrole
                         @if(auth()->user()->isTeacher())
-                        <li><a href="{{ route('teacher/dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('teacher/dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Teacher Dashboard</a></li>
+                        <li><a href="{{ route('teacher.dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('teacher/dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Teacher Dashboard</a></li>
                         @endif
                         @if(auth()->user()->isStudent())
-                        <li><a href="{{ route('student/dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('student/dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Student Dashboard</a></li>
+                        <li><a href="{{ route('student.dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('student/dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Student Dashboard</a></li>
                         @endif
                         @if(auth()->user()->isParent())
                         <li><a href="{{ route('parent.dashboard') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('parent.dashboard') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Parent Dashboard</a></li>
