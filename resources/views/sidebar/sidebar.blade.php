@@ -59,7 +59,7 @@
                 @endhasanyrole
 
                 <!-- Departments -->
-                @hasanyrole('super-admin|admin')
+                <!-- @hasanyrole('super-admin|admin')
                 <li class="submenu group {{ request()->routeIs('departments.*') ? 'active' : '' }}">
                     <a href="#" class="flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->routeIs('departments.*') ? 'text-blue-600 bg-blue-50' : '' }}">
                         <div class="flex items-center gap-3"><i class="fas fa-building text-lg w-5 text-center"></i> <span>Departments</span></div>
@@ -70,7 +70,7 @@
                         <li><a href="{{ route('departments.create') }}" class="block px-3 py-2 text-sm rounded-md hover:text-blue-600 {{ request()->routeIs('departments.create') ? 'text-blue-600 font-semibold' : 'text-gray-500' }}">Department Add</a></li>
                     </ul>
                 </li>
-                @endhasanyrole
+                @endhasanyrole -->
 
                 <!-- Subjects -->
                 @hasanyrole('super-admin|admin|teacher')
