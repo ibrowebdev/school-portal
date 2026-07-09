@@ -71,4 +71,8 @@ class Attendance extends Model
     {
         return $query->where('status', 'absent');
     }
+    public function scopeLate($query)
+    {
+        return $query->where('status', 'late');
+    }
 }

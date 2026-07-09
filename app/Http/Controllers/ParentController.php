@@ -49,6 +49,7 @@ class ParentController extends Controller
                 'total' => Attendance::where('student_id', $child->id)->where('term_id', $currentTerm->id)->count(),
                 'present' => Attendance::where('student_id', $child->id)->where('term_id', $currentTerm->id)->present()->count(),
                 'absent' => Attendance::where('student_id', $child->id)->where('term_id', $currentTerm->id)->absent()->count(),
+                'late' => Attendance::where('student_id', $child->id)->where('term_id', $currentTerm->id)->late()->count(),
             ];
         }
 
@@ -66,8 +67,8 @@ class ParentController extends Controller
         $currentSession = AcademicSession::current()->first();
         $currentTerm = Term::current()->first();
 
-        $sessionId = $request->get('academic_session_id', $currentSession?->id);
-        $termId = $request->get('term_id', $currentTerm?->id);
+        $sessionId = $request->input('academic_session_id', $currentSession?->id);
+        $termId = $request->input('term_id', $currentTerm?->id);
 
         $results = Result::with(['subject', 'schoolClass', 'term', 'academicSession'])
             ->where('student_id', $child->id)

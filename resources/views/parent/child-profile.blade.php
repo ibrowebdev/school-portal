@@ -61,7 +61,7 @@
             {{-- Attendance Overview --}}
             <x-card title="Current Term Attendance">
                 @if(!empty($attendanceSummary) && $attendanceSummary['total'] > 0)
-                    <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="grid grid-cols-4 gap-3 text-center">
                         <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
                             <div class="text-sm text-gray-500 font-medium mb-1">Total Days</div>
                             <div class="text-2xl font-bold text-gray-800">{{ $attendanceSummary['total'] }}</div>
@@ -73,6 +73,10 @@
                         <div class="p-4 bg-red-50 rounded-lg border border-red-100">
                             <div class="text-sm text-red-700 font-medium mb-1">Absent</div>
                             <div class="text-2xl font-bold text-red-700">{{ $attendanceSummary['absent'] }}</div>
+                        </div>
+                        <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                            <div class="text-sm text-yellow-700 font-medium mb-1">Late</div>
+                            <div class="text-2xl font-bold text-yellow-700">{{ $attendanceSummary['late'] }}</div>
                         </div>
                     </div>
                     

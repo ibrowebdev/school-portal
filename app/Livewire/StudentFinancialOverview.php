@@ -32,12 +32,12 @@ class StudentFinancialOverview extends Component
         $this->student = $student;
 
         // Try to get active session and term from Settings table
-        $sessionSetting = Setting::where('type', 'current_session')->first();
-        $termSetting = Setting::where('type', 'current_term')->first();
+        $sessionSettingValue = Setting::get('current_session');
+        $termSettingValue = Setting::get('current_term');
 
         // If not found in settings, fallback to the latest
-        $this->activeSession = $sessionSetting ? AcademicSession::find($sessionSetting->description) : AcademicSession::latest()->first();
-        $this->activeTerm = $termSetting ? Term::find($termSetting->description) : Term::latest()->first();
+        $this->activeSession = $sessionSettingValue ? AcademicSession::find($sessionSettingValue) : AcademicSession::latest()->first();
+        $this->activeTerm = $termSettingValue ? Term::find($termSettingValue) : Term::latest()->first();
 
         $this->calculateFinancials();
     }
