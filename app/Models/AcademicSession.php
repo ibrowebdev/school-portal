@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AcademicSession extends Model
 {
@@ -48,6 +49,10 @@ class AcademicSession extends Model
     public function scopeCurrent($query)
     {
         return $query->where('is_current', true);
+    }
+    public function currentTerm(): HasOne
+    {
+        return $this->hasOne(Term::class)->where('is_current', true);
     }
 
     // ─── Helpers ───────────────────────────────────────────────

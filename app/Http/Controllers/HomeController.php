@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AcademicSession;
 use App\Models\SchoolClass;
+use App\Models\Term;
 use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 
