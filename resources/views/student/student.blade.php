@@ -64,12 +64,12 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach ($studentList as $key=>$list)
+                    @foreach ($studentList as $list)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
                                 <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             </td>
-                            <td class="px-6 py-4 text-gray-500 font-medium id">STD{{ ++$key }}</td>
+                            <td class="px-6 py-4 text-gray-500 font-medium id">{{ $loop->iteration }}</td>
                             <td hidden class="actual_id">{{ $list->id }}</td>
                             <td hidden class="avatar">{{ $list->upload }}</td>
                             <td class="px-6 py-4">
@@ -80,11 +80,11 @@
                                     <a href="student-details.html" class="font-medium text-gray-800 hover:text-blue-600 transition">{{ $list->first_name }} {{ $list->last_name }}</a>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-gray-600">{{ $list->class }} {{ $list->section }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ $list->studentProfile?->schoolClass?->name }} {{ $list->studentProfile?->classSection?->name }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $list->date_of_birth }}</td>
-                            <td class="px-6 py-4 text-gray-600">Soeng Soeng</td>
+                            <td class="px-6 py-4 text-gray-600">{{$list->studentProfile->parent?->name}}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $list->phone_number }}</td>
-                            <td class="px-6 py-4 text-gray-600">110 Sen Sok Steet,PP</td>
+                            <td class="px-6 py-4 text-gray-600">{{$list->studentProfile->address}}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ url('student/edit/'.$list->id) }}" class="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-100 transition">
@@ -100,40 +100,12 @@
                 </tbody>
             </table>
         </div>
+        <div class="border-t border-gray-100 p-6">
+          {{ $studentList->links() }}
+        </div>
     </x-card>
 </div>
 
-{{-- model student delete --}}
-<div class="modal custom-modal fade" id="studentUser" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-xl border-0 shadow-lg">
-            <div class="modal-body p-6 text-center">
-                <div class="mb-6">
-                    <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Student</h3>
-                    <p class="text-gray-500">Are you sure want to delete?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                    <div id="form-errors-container" class="hidden alert alert-danger" style="display: none;">
-                        <ul id="form-errors-list" class="mb-0"></ul>
-                    </div>
-                    <form action="{{ route('students.destroy', $record->id ?? $student->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
-                        @csrf
-                        @method('DELETE')
-                        <input type="hidden" name="id" class="e_id" value="">
-                        <input type="hidden" name="avatar" class="e_avatar" value="">
-                        <div class="flex items-center justify-center gap-4">
-                            <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium w-full sm:w-auto">Delete</button>
-                            <a href="#" data-bs-dismiss="modal" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium w-full sm:w-auto">Cancel</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section('script')
 <script>

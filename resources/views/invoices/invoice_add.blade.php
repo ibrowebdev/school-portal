@@ -481,44 +481,6 @@
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="delete_invoices_details" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-xl border-0 shadow-lg">
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                    <i class="fas fa-trash-alt"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Invoice Details</h3>
-                <p class="text-gray-500 mb-6">Are you sure want to delete?</p>
-                <div class="flex gap-3 justify-center">
-                    <a href="javascript:void(0);" data-bs-dismiss="modal" class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium">Delete</a>
-                    <a href="javascript:void(0);" data-bs-dismiss="modal" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">Cancel</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Save Draft Modal -->
-<div class="modal fade" id="save_invocies_details" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-xl border-0 shadow-lg">
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4 text-2xl">
-                    <i class="fas fa-save"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Save Invoice Details</h3>
-                <p class="text-gray-500 mb-6">Are you sure want to save?</p>
-                <div class="flex gap-3 justify-center">
-                    <a href="#" data-bs-dismiss="modal" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">Save</a>
-                    <a href="#" data-bs-dismiss="modal" class="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">Cancel</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section('script')
     {{-- show hide [Bank Details]--}}
     <script>

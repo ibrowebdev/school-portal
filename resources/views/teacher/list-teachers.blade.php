@@ -108,37 +108,6 @@
     </x-card>
 </div>
 
-{{-- model teacher delete --}}
-<div class="modal custom-modal fade" id="teacherDelete" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-xl border-0 shadow-lg">
-            <div class="modal-body p-6 text-center">
-                <div class="mb-6">
-                    <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Teacher</h3>
-                    <p class="text-gray-500">Are you sure want to delete?</p>
-                </div>
-                <div class="modal-btn delete-action">
-                    <div id="form-errors-container" class="hidden alert alert-danger" style="display: none;">
-                        <ul id="form-errors-list" class="mb-0"></ul>
-                    </div>
-                    <form action="{{ route('teachers.destroy', $record->id ?? $teacher->id ?? 0) }}" method="POST" class="x-submit" data-then="reload">
-                        @csrf
-                        @method('DELETE')
-                        <input type="hidden" name="id" class="e_teacher_id" value="">
-                        <div class="flex items-center justify-center gap-4">
-                            <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium w-full sm:w-auto">Delete</button>
-                            <a href="#" data-bs-dismiss="modal" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium w-full sm:w-auto">Cancel</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section('script')
     {{-- delete js --}}
     <script>

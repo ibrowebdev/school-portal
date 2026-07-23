@@ -68,7 +68,7 @@ class SchoolClassController extends Controller
 
     public function show(SchoolClass $schoolClass)
     {
-        $schoolClass->load(['sections', 'subjects', 'studentProfiles.user', 'teachers']);
+        $schoolClass->load(['sections', 'subjects', 'studentProfiles.user', 'studentProfiles.classSection', 'teachers']);
 
         return view('academic.classes.show', compact('schoolClass'));
     }

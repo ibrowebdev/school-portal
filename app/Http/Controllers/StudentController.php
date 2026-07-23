@@ -23,9 +23,9 @@ class StudentController extends Controller
     public function index()
     {
         $studentList = User::students()
-            ->with('studentProfile.schoolClass', 'studentProfile.classSection')
+            ->with('studentProfile.schoolClass', 'studentProfile.classSection', 'studentProfile.parent')
             ->orderByDesc('id')
-            ->get();
+            ->paginate(30);
 
         return view('student.student', compact('studentList'));
     }

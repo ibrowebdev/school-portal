@@ -116,26 +116,25 @@ class ResultController extends Controller
     {
         $validated = $request->validated();
 
-        DB::beginTransaction();
         try {
-            foreach ($validated['results'] as $resultData) {
-                Result::updateOrCreate(
-                    [
-                        'student_id' => $resultData['student_id'],
-                        'subject_id' => $validated['subject_id'],
-                        'term_id' => $validated['term_id'],
-                        'academic_session_id' => $validated['academic_session_id'],
-                    ],
-                    [
-                        'school_class_id' => $validated['school_class_id'],
-                        'ca_score' => $resultData['ca_score'],
-                        'exam_score' => $resultData['exam_score'],
-                        'uploaded_by' => auth()->id(),
-                    ]
-                );
-            }
-
-            DB::commit();
+            DB::transaction(function () use ($validated) {
+                foreach ($validated['results'] as $resultData) {
+                    Result::updateOrCreate(
+                        [
+                            'student_id' => $resultData['student_id'],
+                            'subject_id' => $validated['subject_id'],
+                            'term_id' => $validated['term_id'],
+                            'academic_session_id' => $validated['academic_session_id'],
+                        ],
+                        [
+                            'school_class_id' => $validated['school_class_id'],
+                            'ca_score' => $resultData['ca_score'],
+                            'exam_score' => $resultData['exam_score'],
+                            'uploaded_by' => auth()->id(),
+                        ]
+                    );
+                }
+            });
 
             return response()->json([
                 'message' => 'Results uploaded successfully!',
@@ -147,7 +146,6 @@ class ResultController extends Controller
                 ]),
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to upload results', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to upload results.'], 500);
@@ -163,8 +161,8 @@ class ResultController extends Controller
         $currentSession = AcademicSession::current()->first();
         $currentTerm = Term::current()->first();
 
-        $sessionId = $request->get('academic_session_id', $currentSession?->id);
-        $termId = $request->get('term_id', $currentTerm?->id);
+        $sessionId = $request->input('academic_session_id', $currentSession?->id);
+        $termId = $request->input('term_id', $currentTerm?->id);
 
         $results = Result::with(['subject', 'schoolClass', 'term', 'academicSession'])
             ->where('student_id', $student->id)
@@ -187,8 +185,8 @@ class ResultController extends Controller
      */
     public function exportPdf(Request $request, User $student)
     {
-        $sessionId = $request->get('academic_session_id');
-        $termId = $request->get('term_id');
+        $sessionId = $request->input('academic_session_id');
+        $termId = $request->input('term_id');
 
         $results = Result::with(['subject', 'schoolClass', 'term', 'academicSession'])
             ->where('student_id', $student->id)

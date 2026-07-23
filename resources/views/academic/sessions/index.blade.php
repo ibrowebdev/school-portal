@@ -71,28 +71,6 @@
     </x-card>
 </div>
 
-{{-- Delete Modal --}}
-<div class="modal custom-modal fade" id="deleteSession" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-xl border-0 shadow-lg">
-            <div class="modal-body p-6 text-center">
-                <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Session</h3>
-                <p class="text-gray-500">This will also delete all associated terms. Are you sure?</p>
-                <form id="deleteSessionForm" method="POST" class="x-submit mt-4" data-then="reload">
-                    @csrf
-                    @method('DELETE')
-                    <div class="flex items-center justify-center gap-4">
-                        <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium">Delete</button>
-                        <a href="#" data-bs-dismiss="modal" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">Cancel</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section('script')
 <script>

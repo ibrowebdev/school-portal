@@ -26,9 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(app()->environment('local')){
-            Model::preventLazyLoading();
-        }
+        Model::preventLazyLoading(! app()->isProduction());
         Gate::before(function ($user, $ability) {
             return $user->hasRole('super-admin') ? true : null;
         });

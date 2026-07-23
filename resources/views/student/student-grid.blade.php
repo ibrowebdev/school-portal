@@ -10,7 +10,7 @@
                 <a href="{{ route('students.index') }}" class="w-10 h-10 border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center hover:bg-gray-50 transition">
                     <i class="fa fa-list"></i>
                 </a>
-                <a href="{{ route('student/grid') }}" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-sm">
+                <a href="{{ route('students.grid') }}" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-sm">
                     <i class="fa fa-th"></i>
                 </a>
             </div>
