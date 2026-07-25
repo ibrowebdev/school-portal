@@ -34,7 +34,7 @@
                 <a href="{{ route('teachers.index') }}" class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-sm hover:bg-blue-700 transition">
                     <i class="fa fa-list"></i>
                 </a>
-                <a href="{{ route('teacher/grid/page') }}" class="w-10 h-10 border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center hover:bg-gray-50 transition">
+                <a href="{{ route('teachers.grid') }}" class="w-10 h-10 border border-gray-200 text-gray-500 rounded-lg flex items-center justify-center hover:bg-gray-50 transition">
                     <i class="fa fa-th"></i>
                 </a>
                 <a href="#" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition flex items-center gap-2 text-sm font-medium">
@@ -71,7 +71,7 @@
                                 <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                             </td>
                             <td hidden class="teacher_id">{{ $list->teacher_id }}</td>
-                            <td class="px-6 py-4 text-gray-500 font-medium">{{ $list->teacher_id }}</td>
+                            <td class="px-6 py-4 text-gray-500 font-medium">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <a href="teacher-details.html" class="shrink-0">

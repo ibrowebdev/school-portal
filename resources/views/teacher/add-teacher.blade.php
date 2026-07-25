@@ -16,8 +16,8 @@
                     <label class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
                     <select class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors @error('full_name') border-red-500 @enderror" id="full_name" name="full_name">
                         <option selected disabled>-- Select Name --</option>
-                        @foreach($users as $key => $names)
-                            <option value="{{ $names->name }}" data-teacher_id={{ $names->user_id }} {{ old('full_name') == $names->name ? "selected" : "" }}>{{ $names->name }}</option>
+                        @foreach(\App\Models\User::teachers() as $key => $names)
+                            <option value="{{ $names->name }}" data-teacher_id={{ $names->id }} {{ old('full_name') == $names->name ? "selected" : "" }}>{{ $names->name }}</option>
                         @endforeach
                     </select>
                     @error('full_name')
