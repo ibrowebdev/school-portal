@@ -22,11 +22,21 @@ class TeacherController extends Controller
     public function index()
     {
         $listTeacher = User::teachers()
-            ->with('teacherProfile')
+            ->with(['teacherProfile', 'assignedClasses'])
             ->orderByDesc('id')
             ->get();
 
-        return view('teacher.list-teachers', compact('listTeacher'));
+        $teacherIds = $listTeacher->pluck('id');
+        $assignments = DB::table('class_teacher')
+            ->whereIn('class_teacher.user_id', $teacherIds)
+            ->join('school_classes', 'class_teacher.school_class_id', '=', 'school_classes.id')
+            ->leftJoin('subjects', 'class_teacher.subject_id', '=', 'subjects.id')
+            ->select('class_teacher.user_id', 'school_classes.name as class_name', 'subjects.name as subject_name')
+            ->get();
+        
+        $assignmentsByUser = $assignments->groupBy('user_id');
+
+        return view('teacher.list-teachers', compact('listTeacher', 'assignmentsByUser'));
     }
 
     /** teacher Grid */
@@ -51,54 +61,52 @@ class TeacherController extends Controller
     {
         $validated = $request->validated();
 
-        DB::beginTransaction();
         try {
-            // Handle avatar upload
-            $avatarPath = 'photo_defaults.jpg';
-            if ($request->hasFile('avatar')) {
-                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
-                $request->file('avatar')->move(public_path('images'), $filename);
-                $avatarPath = $filename;
-            }
+            DB::transaction(function () use ($request, $validated) {
+                // Handle avatar upload
+                $avatarPath = 'photo_defaults.jpg';
+                if ($request->hasFile('avatar')) {
+                    $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
+                    $request->file('avatar')->move(public_path('images'), $filename);
+                    $avatarPath = $filename;
+                }
 
-            // Create the user record
-            $user = User::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'gender' => $validated['gender'],
-                'date_of_birth' => $validated['date_of_birth'] ?? null,
-                'phone_number' => $validated['phone_number'],
-                'type' => User::TEACHER,
-                'status' => 'active',
-                'avatar' => $avatarPath,
-                'join_date' => now()->toDateString(),
-                'password' => Hash::make('password'),
-            ]);
+                // Create the user record
+                $user = User::create([
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'email' => $validated['email'],
+                    'gender' => $validated['gender'],
+                    'date_of_birth' => $validated['date_of_birth'] ?? null,
+                    'phone_number' => $validated['phone_number'],
+                    'type' => User::TEACHER,
+                    'status' => 'active',
+                    'avatar' => $avatarPath,
+                    'join_date' => now()->toDateString(),
+                    'password' => Hash::make('password'),
+                ]);
 
-            $user->assignRole(User::TEACHER);
+                $user->assignRole(User::TEACHER);
 
-            // Create the teacher profile
-            TeacherProfile::create([
-                'user_id' => $user->id,
-                'employee_id' => $validated['employee_id'] ?? null,
-                'qualification' => $validated['qualification'],
-                'experience' => $validated['experience'] ?? null,
-                'address' => $validated['address'] ?? null,
-                'city' => $validated['city'] ?? null,
-                'state' => $validated['state'] ?? null,
-                'zip_code' => $validated['zip_code'] ?? null,
-                'country' => $validated['country'] ?? null,
-            ]);
-
-            DB::commit();
+                // Create the teacher profile
+                TeacherProfile::create([
+                    'user_id' => $user->id,
+                    'employee_id' => $validated['employee_id'] ?? null,
+                    'qualification' => $validated['qualification'],
+                    'experience' => $validated['experience'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'city' => $validated['city'] ?? null,
+                    'state' => $validated['state'] ?? null,
+                    'zip_code' => $validated['zip_code'] ?? null,
+                    'country' => $validated['country'] ?? null,
+                ]);
+            });
 
             return response()->json([
                 'message' => 'Teacher record saved successfully!',
                 'redirect' => route('teachers.index'),
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to save Teacher record', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to save teacher record.'], 500);
@@ -119,51 +127,49 @@ class TeacherController extends Controller
         $validated = $request->validated();
         $teacher = User::findOrFail($id);
 
-        DB::beginTransaction();
         try {
-            // Handle avatar upload
-            if ($request->hasFile('avatar')) {
-                if ($teacher->avatar !== 'photo_defaults.jpg' && ! empty($teacher->avatar) && file_exists(public_path('images/'.$teacher->avatar))) {
-                    unlink(public_path('images/'.$teacher->avatar));
+            DB::transaction(function () use ($request, $validated, $teacher) {
+                // Handle avatar upload
+                if ($request->hasFile('avatar')) {
+                    if ($teacher->avatar !== 'photo_defaults.jpg' && ! empty($teacher->avatar) && file_exists(public_path('images/'.$teacher->avatar))) {
+                        unlink(public_path('images/'.$teacher->avatar));
+                    }
+                    $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
+                    $request->file('avatar')->move(public_path('images'), $filename);
+                    $teacher->avatar = $filename;
                 }
-                $filename = time().'_'.$request->file('avatar')->getClientOriginalName();
-                $request->file('avatar')->move(public_path('images'), $filename);
-                $teacher->avatar = $filename;
-            }
 
-            // Update user record
-            $teacher->update([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'gender' => $validated['gender'],
-                'date_of_birth' => $validated['date_of_birth'] ?? null,
-                'phone_number' => $validated['phone_number'],
-            ]);
+                // Update user record
+                $teacher->update([
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'email' => $validated['email'],
+                    'gender' => $validated['gender'],
+                    'date_of_birth' => $validated['date_of_birth'] ?? null,
+                    'phone_number' => $validated['phone_number'],
+                ]);
 
-            // Update or create teacher profile
-            $teacher->teacherProfile()->updateOrCreate(
-                ['user_id' => $teacher->id],
-                [
-                    'employee_id' => $validated['employee_id'] ?? null,
-                    'qualification' => $validated['qualification'],
-                    'experience' => $validated['experience'] ?? null,
-                    'address' => $validated['address'] ?? null,
-                    'city' => $validated['city'] ?? null,
-                    'state' => $validated['state'] ?? null,
-                    'zip_code' => $validated['zip_code'] ?? null,
-                    'country' => $validated['country'] ?? null,
-                ]
-            );
-
-            DB::commit();
+                // Update or create teacher profile
+                $teacher->teacherProfile()->updateOrCreate(
+                    ['user_id' => $teacher->id],
+                    [
+                        'employee_id' => $validated['employee_id'] ?? null,
+                        'qualification' => $validated['qualification'],
+                        'experience' => $validated['experience'] ?? null,
+                        'address' => $validated['address'] ?? null,
+                        'city' => $validated['city'] ?? null,
+                        'state' => $validated['state'] ?? null,
+                        'zip_code' => $validated['zip_code'] ?? null,
+                        'country' => $validated['country'] ?? null,
+                    ]
+                );
+            });
 
             return response()->json([
                 'message' => 'Teacher record updated successfully!',
                 'redirect' => route('teachers.index'),
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to update Teacher record', ['error' => $e->getMessage()]);
 
             return response()->json(['message' => 'Failed to update teacher record.'], 500);
@@ -186,10 +192,23 @@ class TeacherController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(User $id)
     {
-        $teacher = User::with(['teacherProfile', 'assignedClasses'])->findOrFail($id);
+        $teacher = $id;
+        $teacher->load(['teacherProfile']);
+        
+        $assignments = \Illuminate\Support\Facades\DB::table('class_teacher')
+            ->where('class_teacher.user_id', $teacher->id)
+            ->join('school_classes', 'class_teacher.school_class_id', '=', 'school_classes.id')
+            ->leftJoin('subjects', 'class_teacher.subject_id', '=', 'subjects.id')
+            ->select(
+                'school_classes.name as class_name', 
+                'school_classes.level', 
+                'school_classes.capacity', 
+                'subjects.name as subject_name'
+            )
+            ->get();
 
-        return view('teacher.show-teacher', compact('teacher'));
+        return view('teacher.show-teacher', compact('teacher', 'assignments'));
     }
 }

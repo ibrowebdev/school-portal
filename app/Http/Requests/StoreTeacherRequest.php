@@ -16,8 +16,8 @@ class StoreTeacherRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'gender' => ['required', 'string', 'in:male,female'],
+            'email' => ['nullable', 'email', 'unique:users,email'],
+            'gender' => ['nullable', 'string', 'in:male,female'],
             'date_of_birth' => ['nullable', 'date'],
             'phone_number' => ['required', 'string', 'max:20'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],

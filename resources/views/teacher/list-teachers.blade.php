@@ -74,20 +74,31 @@
                             <td class="px-6 py-4 text-gray-500 font-medium">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <a href="teacher-details.html" class="shrink-0">
+                                    <a href="{{ route('teachers.show', $list->id) }}" class="shrink-0">
                                         @if (!empty($list->avatar))
                                             <img class="w-8 h-8 rounded-full object-cover border border-gray-200" src="{{ URL::to('images/'.$list->avatar) }}" alt="{{ $list->name }}">
                                         @else
                                             <img class="w-8 h-8 rounded-full object-cover border border-gray-200" src="{{ URL::to('images/photo_defaults.jpg') }}" alt="{{ $list->name }}">
                                         @endif
                                     </a>
-                                    <a href="teacher-details.html" class="font-medium text-gray-800 hover:text-blue-600 transition">{{ $list->name }}</a>
+                                    <a href="{{ route('teachers.show', $list->id) }}" class="font-medium text-gray-800 hover:text-blue-600 transition">{{ $list->name }}</a>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-gray-600">10</td>
-                            <td class="px-6 py-4 text-gray-600">{{ $list->gender }}</td>
-                            <td class="px-6 py-4 text-gray-600">Mathematics</td>
-                            <td class="px-6 py-4 text-gray-600">A</td>
+                            <td class="px-6 py-4 text-gray-600">
+                                @php
+                                    $userAssignments = $assignmentsByUser->get($list->id) ?? collect();
+                                    $classNames = $userAssignments->pluck('class_name')->unique()->filter()->join(', ');
+                                @endphp
+                                {{ $classNames ?: 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-600">{{ ucfirst($list->gender) }}</td>
+                            <td class="px-6 py-4 text-gray-600">
+                                @php
+                                    $subjectNames = $userAssignments->pluck('subject_name')->unique()->filter()->join(', ');
+                                @endphp
+                                {{ $subjectNames ?: 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-600">N/A</td>
                             <td class="px-6 py-4 text-gray-600">{{ $list->phone_number }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $list->address }}</td>
                             <td class="px-6 py-4 text-right">

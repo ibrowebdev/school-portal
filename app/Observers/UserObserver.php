@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
+use App\Notifications\WelcomeNotification;
 
 class UserObserver
 {
@@ -13,5 +14,10 @@ class UserObserver
             $nextID = $latest ? intval(substr($latest, 3)) + 1 : 1;
             $user->unique_id = '000'.sprintf('%03d', $nextID);
         }
+    }
+
+    public function created(User $user)
+    {
+        $user->notify(new WelcomeNotification());
     }
 }

@@ -20,11 +20,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach ($teacherGrid as $key=>$list)
                     <div class="bg-white border border-gray-100 rounded-xl p-6 text-center hover:shadow-md transition-shadow">
-                        <a href="{{ url('teacher/profile/'.$list->id) }}" class="inline-block mb-4">
-                            <img class="w-24 h-24 rounded-full object-cover border-4 border-gray-50 shadow-sm mx-auto" alt="Teachers Info" src="{{ URL::to('images/photo_defaults.jpg') }}">
+                        <a href="{{ route('teachers.show', $list->id) }}" class="inline-block mb-4">
+                            <img class="w-24 h-24 rounded-full object-cover border-4 border-gray-50 shadow-sm mx-auto" alt="Teachers Info" src="{{ !empty($list->avatar) && $list->avatar !== 'photo_defaults.jpg' ? URL::to('images/'.$list->avatar) : URL::to('images/photo_defaults.jpg') }}">
                         </a>
                         <h5 class="text-lg font-bold text-gray-800 mb-1">
-                            <a href="{{ url('teacher/profile/'.$list->id) }}" class="hover:text-blue-600 transition">{{ $list->full_name }}</a>
+                            <a href="{{ route('teachers.show', $list->id) }}" class="hover:text-blue-600 transition">{{ $list->full_name }}</a>
                         </h5>
                         <p class="text-sm text-gray-500 font-medium">Teacher</p>
                     </div>

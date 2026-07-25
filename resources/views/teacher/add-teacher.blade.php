@@ -12,26 +12,19 @@
             @csrf
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700">Full Name <span class="text-red-500">*</span></label>
-                    <select class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors @error('full_name') border-red-500 @enderror" id="full_name" name="full_name">
-                        <option selected disabled>-- Select Name --</option>
-                        @foreach(\App\Models\User::teachers() as $key => $names)
-                            <option value="{{ $names->name }}" data-teacher_id={{ $names->id }} {{ old('full_name') == $names->name ? "selected" : "" }}>{{ $names->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('full_name')
-                        <span class="text-sm text-red-500 block mt-1"><strong>{{ $message }}</strong></span>
-                    @enderror
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <x-form.input name="first_name" label="First Name" required="true" />
+                    <x-form.input name="last_name" label="Last Name" required="true" />
                 </div>
                 
                 <x-form.input name="teacher_id" id="teacher_id" label="Teacher ID" required="true" :value="old('teacher_id')" readonly="true" />
                 
-                <x-form.select name="gender" label="Gender" required="true" :options="['Female' => 'Female', 'Male' => 'Male', 'Others' => 'Others']" />
+                <x-form.select name="gender" label="Gender" :options="['female' => 'Female', 'male' => 'Male']" />
                 
-                <x-form.input name="experience" label="Experience" required="true" :value="old('experience')" placeholder="Enter Experience" />
+                <x-form.input name="email" label="Email" :value="old('email')" placeholder="Enter Email" />
+                <x-form.input name="experience" label="Experience" :value="old('experience')" placeholder="Enter Experience" />
                 
-                <x-form.input name="qualification" label="Qualification" required="true" class="datetimepicker" :value="old('qualification')" placeholder="DD-MM-YYYY" />
+                <x-form.input name="qualification" label="Qualification" required="true" :value="old('qualification')" placeholder="DD-MM-YYYY" />
                 
                 <x-form.input name="date_of_birth" label="Date Of Birth" required="true" class="datetimepicker" :value="old('date_of_birth')" placeholder="DD-MM-YYYY" />
             </div>
